@@ -1,0 +1,12 @@
+[submodule "drug_dispenser/managed_components/components/lvgl"]
+	path = drug_dispenser/managed_components/components/lvgl
+	url = https://github.com/lvgl/lvgl.git
+[submodule "drug_dispenser/components/components/lvgl"]
+	path = drug_dispenser/components/components/lvgl
+	url = https://github.com/lvgl/lvgl.git
+[submodule "drug_dispenser/components/components/lvgl_esp32_drivers"]
+	path = drug_dispenser/components/components/lvgl_esp32_drivers
+	url = https://github.com/lvgl/lvgl_esp32_drivers.git
+[submodule "drug_dispenser/components/lvgl_esp32_drivers"]
+	path = drug_dispenser/components/lvgl_esp32_drivers
+	url = https://github.com/lvgl/lvgl_esp32_drivers.git
