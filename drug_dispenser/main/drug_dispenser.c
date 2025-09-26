@@ -19,13 +19,13 @@ void display_init(void);
 #define EXAMPLE_LCD_PIXEL_CLOCK_HZ (20 * 1000 * 1000)
 #define EXAMPLE_LCD_BK_LIGHT_ON_LEVEL 1
 #define EXAMPLE_LCD_BK_LIGHT_OFF_LEVEL !EXAMPLE_LCD_BK_LIGHT_ON_LEVEL
-#define EXAMPLE_PIN_NUM_SCLK 8
-#define EXAMPLE_PIN_NUM_MOSI 10
-#define EXAMPLE_PIN_NUM_MISO -1 // Not used for round display
-#define EXAMPLE_PIN_NUM_LCD_DC 3
-#define EXAMPLE_PIN_NUM_LCD_RST 2
-#define EXAMPLE_PIN_NUM_LCD_CS 1
-#define EXAMPLE_PIN_NUM_BK_LIGHT 6
+#define EXAMPLE_PIN_NUM_SCLK 7
+#define EXAMPLE_PIN_NUM_MOSI 9
+#define EXAMPLE_PIN_NUM_MISO 8 // Not used for round display
+#define EXAMPLE_PIN_NUM_LCD_DC 4
+#define EXAMPLE_PIN_NUM_LCD_RST 1
+#define EXAMPLE_PIN_NUM_LCD_CS 2
+#define EXAMPLE_PIN_NUM_BK_LIGHT 43
 #define EXAMPLE_PIN_NUM_TOUCH_CS 44 // Touch interrupt pin
 // The pixel number in horizontal and vertical
 #define EXAMPLE_LCD_H_RES 240
@@ -94,6 +94,8 @@ void display_init(void)
     //     gpio_set_level(EXAMPLE_PIN_NUM_BK_LIGHT, EXAMPLE_LCD_BK_LIGHT_ON_LEVEL);
     // }
 
+    esp_lcd_panel_mirror(panel_handle, true, false);
+
 
     ESP_LOGI(TAG, "Display initialized");
 }
@@ -107,7 +109,12 @@ void my_flush_cb(lv_display_t *display, const lv_area_t *area, uint8_t *px_map)
     int offsety1 = area->y1;
     int offsety2 = area->y2;
     // because SPI LCD is big-endian, we need to swap the RGB bytes order
+
+    // Assures colors are correct on little-endian systems
     lv_draw_sw_rgb565_swap(px_map, (offsetx2 + 1 - offsetx1) * (offsety2 + 1 - offsety1));
+    
+    
+    
     esp_lcd_panel_draw_bitmap(panel_handle, offsetx1, offsety1, offsetx2 + 1, offsety2 + 1, px_map);
 
     lv_display_flush_ready(display);
@@ -128,7 +135,7 @@ void app_main(void)
     ESP_LOGI(TAG, "LVGL display created");
 
 
-    static uint8_t buf[EXAMPLE_LCD_H_RES * EXAMPLE_LCD_V_RES / 10 * 2]; // Reduced buffer size for 240x240 display
+    static uint8_t buf[EXAMPLE_LCD_H_RES * EXAMPLE_LCD_V_RES / 10]; // Reduced buffer size for 240x240 display
 
     lv_display_set_buffers(display, buf, NULL, sizeof(buf), LV_DISPLAY_RENDER_MODE_PARTIAL);
     ESP_LOGI(TAG, "LVGL display buffers set");
@@ -139,14 +146,16 @@ void app_main(void)
 
     /* Create widgets */
     lv_obj_t *my_button1 = lv_button_create(lv_screen_active());
-    /* Set parent-sized width, and content-sized height */
-    lv_obj_set_size(my_button1, lv_pct(100), LV_SIZE_CONTENT);
-    /* Align to the right center with 20px offset horizontally */
-    lv_obj_align(my_button1, LV_ALIGN_RIGHT_MID, -20, 0);
 
-    /* Create widgets */
-    lv_obj_t *label = lv_label_create(lv_screen_active());
-    lv_label_set_text(label, "Hello LVGL!");
+    my_button1 = lv_button_create(lv_scr_act());
+    lv_obj_set_size(my_button1, 120, 50);
+    lv_obj_t *label = lv_label_create(my_button1);
+    lv_label_set_text(label, "Hello World");
+    lv_obj_center(label);
+
+    /* Align to display center */
+    lv_obj_align(my_button1, LV_ALIGN_CENTER, 0, 0);
+
 
 
     ESP_LOGI(TAG, "Entering main loop");
