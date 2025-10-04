@@ -1,7 +1,0 @@
-{
-    "files.associations": {
-        "*.s": "shellscript",
-        "*.c": "c",
-        "lvgl.h": "c"
-    }
-}
