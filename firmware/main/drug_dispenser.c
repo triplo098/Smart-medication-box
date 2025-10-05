@@ -1,4 +1,3 @@
-void display_init(void);
 
 #include <stdio.h>
 #include "freertos/FreeRTOS.h"
@@ -13,6 +12,8 @@ void display_init(void);
 #include "esp_lcd_gc9a01.h"
 #include "driver/gpio.h"
 #include "esp_lcd_panel_ops.h"
+
+#include <pcf8563.h>
 
 #define TAG "display_example"
 
@@ -40,7 +41,12 @@ void display_init(void);
 #define EXAMPLE_LVGL_TASK_STACK_SIZE (4 * 1024)
 #define EXAMPLE_LVGL_TASK_PRIORITY 2
 
+#define CONFIG_EXAMPLE_I2C_MASTER_SDA 5
+#define CONFIG_EXAMPLE_I2C_MASTER_SCL 6
+
 esp_lcd_panel_handle_t panel_handle = NULL;
+static lv_obj_t *time_label;
+static i2c_dev_t dev;
 
 void display_init(void)
 {
@@ -96,12 +102,11 @@ void display_init(void)
 
     esp_lcd_panel_mirror(panel_handle, true, false);
 
-
     ESP_LOGI(TAG, "Display initialized");
 }
 
 void my_flush_cb(lv_display_t *display, const lv_area_t *area, uint8_t *px_map)
-{   
+{
     ESP_LOGI(TAG, "Flushing area x1:%d, y1:%d, x2:%d, y2:%d", area->x1, area->y1, area->x2, area->y2);
 
     int offsetx1 = area->x1;
@@ -112,28 +117,54 @@ void my_flush_cb(lv_display_t *display, const lv_area_t *area, uint8_t *px_map)
 
     // Assures colors are correct on little-endian systems
     lv_draw_sw_rgb565_swap(px_map, (offsetx2 + 1 - offsetx1) * (offsety2 + 1 - offsety1));
-    
-    
-    
+
     esp_lcd_panel_draw_bitmap(panel_handle, offsetx1, offsety1, offsetx2 + 1, offsety2 + 1, px_map);
 
     lv_display_flush_ready(display);
 }
 
+static void lvgl_update_time_cb(lv_timer_t *timer)
+{
+    struct tm time;
+    bool valid;
+
+    if (pcf8563_get_time(&dev, &time, &valid) == ESP_OK && valid)
+    {
+        char buf[32];
+        snprintf(buf, sizeof(buf), "%02d:%02d:%02d",
+                 time.tm_hour, time.tm_min, time.tm_sec);
+
+        lv_label_set_text(time_label, buf);
+    }
+}
+    
+
 void app_main(void)
 {
+
+    ESP_ERROR_CHECK(i2cdev_init());
+
+    memset(&dev, 0, sizeof(i2c_dev_t));
+
+    ESP_ERROR_CHECK(pcf8563_init_desc(&dev, 0, CONFIG_EXAMPLE_I2C_MASTER_SDA, CONFIG_EXAMPLE_I2C_MASTER_SCL));
+
+    struct tm time = {0};
+
+    strptime(__DATE__, "%b %d %Y", &time);
+    strptime(__TIME__, "%H:%M:%S", &time);
+
+    ESP_ERROR_CHECK(pcf8563_set_time(&dev, &time));
+
     display_init();
 
     lv_init();
     ESP_LOGI(TAG, "LVGL initialized");
-
 
     lv_tick_set_cb(xTaskGetTickCount);
     ESP_LOGI(TAG, "LVGL tick set");
 
     lv_display_t *display = lv_display_create(EXAMPLE_LCD_H_RES, EXAMPLE_LCD_V_RES);
     ESP_LOGI(TAG, "LVGL display created");
-
 
     static uint8_t buf[EXAMPLE_LCD_H_RES * EXAMPLE_LCD_V_RES / 10]; // Reduced buffer size for 240x240 display
 
@@ -144,30 +175,18 @@ void app_main(void)
     ESP_LOGI(TAG, "Setting flusb_cb");
     lv_display_set_flush_cb(display, my_flush_cb);
 
-    /* Create widgets */
-    lv_obj_t *my_button1 = lv_button_create(lv_screen_active());
+    // create label to show time
+    time_label = lv_label_create(lv_scr_act());
+    lv_obj_center(time_label);
 
-    my_button1 = lv_button_create(lv_scr_act());
-    lv_obj_set_size(my_button1, 120, 50);
-    lv_obj_set_style_bg_color(my_button1, lv_color_hex3(0xFF4), LV_PART_MAIN);
-
-
-    lv_obj_t *label = lv_label_create(my_button1);
-    lv_label_set_text(label, "Hello World");
-    lv_obj_center(label);
-
-    /* Align to display center */
-    lv_obj_align(my_button1, LV_ALIGN_CENTER, 0, 0);
-
-
+    lv_timer_create(lvgl_update_time_cb, 100, NULL);
 
     ESP_LOGI(TAG, "Entering main loop");
 
-
     while (1)
     {
-        ESP_LOGI(TAG, "spin");
+        // ESP_LOGI(TAG, "spin");
         lv_timer_handler();
-        vTaskDelay(pdMS_TO_TICKS(1000));
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
 }

@@ -1,0 +1,6 @@
+/lved/project/build-preview/CMakeFiles/lved-runtime.dir
+/lved/project/build-preview/CMakeFiles/edit_cache.dir
+/lved/project/build-preview/CMakeFiles/rebuild_cache.dir
+/lved/project/build-preview/project/CMakeFiles/lib-ui.dir
+/lved/project/build-preview/project/CMakeFiles/edit_cache.dir
+/lved/project/build-preview/project/CMakeFiles/rebuild_cache.dir
