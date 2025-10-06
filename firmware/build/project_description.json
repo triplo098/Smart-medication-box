@@ -1,15 +1,15 @@
 {
     "version":            "1.2",
-    "project_name":       "drug_dispenser",
-    "project_version":    "651dc41-dirty",
+    "project_name":       "main",
+    "project_version":    "00d2e32-dirty",
     "project_path":       "/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware",
     "idf_path":           "/home/piotr/esp/esp-idf",
     "build_dir":          "/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/build",
     "config_file":        "/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/sdkconfig",
     "config_defaults":    "",
     "bootloader_elf":     "/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/build/bootloader/bootloader.elf",
-    "app_elf":            "drug_dispenser.elf",
-    "app_bin":            "drug_dispenser.bin",
+    "app_elf":            "main.elf",
+    "app_bin":            "main.bin",
     "build_type":         "flash_app",
     "git_revision":       "v5.5.1",
     "target":             "esp32s3",
@@ -1930,7 +1930,7 @@
             "managed_reqs": [],
             "managed_priv_reqs": [ "espressif__esp_lcd_gc9a01" ],
             "file": "/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/build/esp-idf/main/libmain.a",
-            "sources": [ "/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/main/drug_dispenser.c" ],
+            "sources": [ "/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/main/main.c", "/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/main/display_driver.c" ],
             "include_dirs": [ "." ]
         },
         "max1704x": {

@@ -2,6 +2,8 @@
     "files.associations": {
         "*.s": "shellscript",
         "*.c": "c",
-        "lvgl.h": "c"
+        "lvgl.h": "c",
+        "display_driver.h": "c",
+        "esp_lcd_gc9a01.h": "c"
     }
 }

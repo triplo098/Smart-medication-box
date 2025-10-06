@@ -10,7 +10,7 @@
 /home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/build/CMakeFiles/flash.dir
 /home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/build/CMakeFiles/encrypted-flash.dir
 /home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/build/CMakeFiles/_project_elf_src.dir
-/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/build/CMakeFiles/drug_dispenser.elf.dir
+/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/build/CMakeFiles/main.elf.dir
 /home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/build/CMakeFiles/size.dir
 /home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/build/CMakeFiles/size-files.dir
 /home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/build/CMakeFiles/size-components.dir

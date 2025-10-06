@@ -1,2 +1,2 @@
-idf_component_register(SRCS "drug_dispenser.c"
+idf_component_register(SRCS "main.c" "display_driver.c"
                     INCLUDE_DIRS ".")
