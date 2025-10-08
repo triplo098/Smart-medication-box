@@ -29,11 +29,16 @@
 #define EXAMPLE_LVGL_TASK_MIN_DELAY_MS 1000 / CONFIG_FREERTOS_HZ
 #define EXAMPLE_LVGL_TASK_STACK_SIZE (4 * 1024)
 #define EXAMPLE_LVGL_TASK_PRIORITY 2
+#define TOUCH_INT 44
 
+#define CHSC6X_I2C_ADDR 0x2e
 
 
 extern lv_obj_t *time_label;
-extern i2c_dev_t dev;
+extern lv_indev_t *indev;
+
+extern i2c_dev_t rtc_dev;
+extern i2c_dev_t chsc6x_dev;
 
 
 void display_init(void);
@@ -42,7 +47,9 @@ void my_flush_cb(lv_display_t *display, const lv_area_t *area, uint8_t *px_map);
 
 void lvgl_update_time_cb(lv_timer_t *timer);
 
+void touch_init();
 
+esp_err_t chsc6x_init_desc(i2c_dev_t *dev, i2c_port_t port, gpio_num_t sda_gpio, gpio_num_t scl_gpio);
 
 
 #endif // DISPLAY_DRIVER_H

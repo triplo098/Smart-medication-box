@@ -4,6 +4,11 @@
         "*.c": "c",
         "lvgl.h": "c",
         "display_driver.h": "c",
-        "esp_lcd_gc9a01.h": "c"
+        "esp_lcd_gc9a01.h": "c",
+        "pcf8563.h": "c",
+        "lv_conf_internal.h": "c",
+        "lv_string.h": "c",
+        "lv_tlsf_private.h": "c",
+        "i2cdev.h": "c"
     }
 }
