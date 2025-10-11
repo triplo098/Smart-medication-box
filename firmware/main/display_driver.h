@@ -45,7 +45,7 @@ void display_init(void);
 
 void my_flush_cb(lv_display_t *display, const lv_area_t *area, uint8_t *px_map);
 
-void lvgl_update_time_cb(lv_timer_t *timer);
+void lvgl_update_time_cb();
 
 void touch_init();
 

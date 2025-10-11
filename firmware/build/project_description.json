@@ -1,7 +1,7 @@
 {
     "version":            "1.2",
     "project_name":       "main",
-    "project_version":    "68e63ef-dirty",
+    "project_version":    "5524efa-dirty",
     "project_path":       "/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware",
     "idf_path":           "/home/piotr/esp/esp-idf",
     "build_dir":          "/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/build",
@@ -1930,7 +1930,7 @@
             "managed_reqs": [],
             "managed_priv_reqs": [ "espressif__esp_lcd_gc9a01" ],
             "file": "/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/build/esp-idf/main/libmain.a",
-            "sources": [ "/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/main/main.c", "/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/main/display_driver.c" ],
+            "sources": [ "/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/main/main.c", "/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/main/display_driver.c", "/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/main/lvgl_screens.c" ],
             "include_dirs": [ "." ]
         },
         "max1704x": {

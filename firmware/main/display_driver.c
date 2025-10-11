@@ -18,7 +18,6 @@ static const char *TAG = "display_driver";
 esp_lcd_panel_handle_t panel_handle = NULL;
 uint8_t screen_rotation = 0;
 
-
 void display_init(void)
 {
     esp_lcd_panel_io_handle_t io_handle = NULL;
@@ -69,7 +68,7 @@ void my_flush_cb(lv_display_t *display, const lv_area_t *area, uint8_t *px_map)
     lv_display_flush_ready(display);
 }
 
-void lvgl_update_time_cb(lv_timer_t *timer)
+void lvgl_update_time_cb()
 {
     struct tm time;
     bool valid;
@@ -77,8 +76,8 @@ void lvgl_update_time_cb(lv_timer_t *timer)
     if (pcf8563_get_time(&rtc_dev, &time, &valid) == ESP_OK && valid)
     {
         char buf[64];
-        snprintf(buf, sizeof(buf), "%02d:%02d:%02d %02d/%02d/%04d",
-                 time.tm_hour, time.tm_min, time.tm_sec, time.tm_mday, time.tm_mon + 1, time.tm_year + 1900);
+        snprintf(buf, sizeof(buf), "%02d:%02d %02d/%02d/%04d",
+                 time.tm_hour, time.tm_min, time.tm_mday, time.tm_mon + 1, time.tm_year + 1900);
 
         lv_label_set_text(time_label, buf);
     }
@@ -90,15 +89,14 @@ esp_err_t chsc6x_init_desc(i2c_dev_t *dev, i2c_port_t port, gpio_num_t sda_gpio,
     dev->addr = CHSC6X_I2C_ADDR;
     dev->cfg.sda_io_num = sda_gpio;
     dev->cfg.scl_io_num = scl_gpio;
-
     return i2c_dev_create_mutex(dev);
 }
-
 
 void chsc6x_convert_xy(uint8_t *x, uint8_t *y)
 {
     uint8_t x_tmp = *x, y_tmp = *y, _end = 0;
-    for(int i=1; i<=screen_rotation; i++){
+    for (int i = 1; i <= screen_rotation; i++)
+    {
         x_tmp = *x;
         y_tmp = *y;
         _end = (i % 2) ? EXAMPLE_LCD_V_RES : EXAMPLE_LCD_H_RES;
@@ -112,13 +110,12 @@ bool chsc6x_is_pressed(void)
     if (gpio_get_level(TOUCH_INT) != 0)
         return false;
     {
-        vTaskDelay(pdMS_TO_TICKS(10));
+        // vTaskDelay(pdMS_TO_TICKS(5));
         if (gpio_get_level(TOUCH_INT) != 0)
             return false;
     }
     return true;
 }
-
 
 void chsc6x_get_xy(lv_coord_t *x, lv_coord_t *y)
 {
@@ -126,7 +123,8 @@ void chsc6x_get_xy(lv_coord_t *x, lv_coord_t *y)
 
     // Perform I2C read
     esp_err_t res = i2c_dev_read(&chsc6x_dev, NULL, 0, temp, CHSC6X_READ_POINT_LEN);
-    if (res != ESP_OK) {
+    if (res != ESP_OK)
+    {
         ESP_LOGW(TAG, "I2C read failed: %s", esp_err_to_name(res));
         *x = -1;
         *y = -1;
@@ -134,16 +132,18 @@ void chsc6x_get_xy(lv_coord_t *x, lv_coord_t *y)
     }
 
     // Verify valid touch data
-    if (temp[0] == 0x01) {
+    if (temp[0] == 0x01)
+    {
         chsc6x_convert_xy(&temp[2], &temp[4]);
         *x = temp[2];
         *y = temp[4];
-    } else {
+    }
+    else
+    {
         *x = -1;
         *y = -1;
     }
 }
-
 
 void chsc6x_read(lv_indev_t *indev, lv_indev_data_t *data)
 {
@@ -151,7 +151,6 @@ void chsc6x_read(lv_indev_t *indev, lv_indev_data_t *data)
     if (!chsc6x_is_pressed())
     {
         data->state = LV_INDEV_STATE_REL;
-        
     }
     else
     {

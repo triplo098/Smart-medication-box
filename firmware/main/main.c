@@ -5,11 +5,11 @@
 #include <nvs_flash.h>
 
 #include "display_driver.h"
+#include "lvgl_screens.h"
 
 #define CONFIG_EXAMPLE_I2C_MASTER_SDA 5
 #define CONFIG_EXAMPLE_I2C_MASTER_SCL 6
 
-static const char *TAG = "main";
 i2c_dev_t rtc_dev;
 i2c_dev_t chsc6x_dev;
 
@@ -19,13 +19,14 @@ lv_indev_t *indev;
 void app_main(void)
 {
 
-    // I2c iniat
-    memset(&rtc_dev, 0, sizeof(i2c_dev_t));
+    // I2C init
     ESP_ERROR_CHECK(i2cdev_init());
 
     // PCF8563 RTC
+    memset(&rtc_dev, 0, sizeof(i2c_dev_t));
     ESP_ERROR_CHECK(pcf8563_init_desc(&rtc_dev, 0, CONFIG_EXAMPLE_I2C_MASTER_SDA, CONFIG_EXAMPLE_I2C_MASTER_SCL));
 
+    
     struct tm time = {0};
     strptime(__DATE__, "%b %d %Y", &time);
     strptime(__TIME__, "%H:%M:%S", &time);
@@ -47,18 +48,17 @@ void app_main(void)
     // Setting up touch I2c
     memset(&chsc6x_dev, 0, sizeof(i2c_dev_t));
     chsc6x_init_desc(&chsc6x_dev, 0, CONFIG_EXAMPLE_I2C_MASTER_SDA, CONFIG_EXAMPLE_I2C_MASTER_SCL);
+    
     touch_init();
+    
+    
+    init_start_scr(NULL);
+        
 
-    // Create a label to display time
-    time_label = lv_label_create(lv_scr_act());
-    lv_obj_center(time_label);
-    lv_timer_create(lvgl_update_time_cb, 100, NULL);
-
-    ESP_LOGI(TAG, "Entering main loop");
     while (1)
     {
         // Handle LVGL tasks
         lv_timer_handler();
-        vTaskDelay(pdMS_TO_TICKS(10));
+        vTaskDelay(pdMS_TO_TICKS(100));
     }
 }
