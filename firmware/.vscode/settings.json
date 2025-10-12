@@ -10,6 +10,10 @@
         "lv_string.h": "c",
         "lv_tlsf_private.h": "c",
         "i2cdev.h": "c",
-        "lvgl_screens.h": "c"
+        "lvgl_screens.h": "c",
+        "queue.h": "c",
+        "esp_check.h": "c",
+        "limits.h": "c",
+        "cstdlib": "c"
     }
 }

@@ -4,7 +4,8 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/home/piotr/.espressif/**"
+                "/home/piotr/.espressif/**",
+                "/home/piotr/esp/esp-idf/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",

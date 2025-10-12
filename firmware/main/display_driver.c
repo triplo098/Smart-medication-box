@@ -5,7 +5,6 @@
 #include "esp_lcd_panel_ops.h"
 #include "esp_lcd_gc9a01.h"
 #include "driver/gpio.h"
-#include "esp_lcd_panel_ops.h"
 #include "esp_log.h"
 #include "lvgl.h"
 #include "pcf8563.h"
@@ -22,19 +21,19 @@ void display_init(void)
 {
     esp_lcd_panel_io_handle_t io_handle = NULL;
     ESP_LOGI(TAG, "Initialize SPI bus");
-    const spi_bus_config_t bus_config = GC9A01_PANEL_BUS_SPI_CONFIG(EXAMPLE_PIN_NUM_SCLK, EXAMPLE_PIN_NUM_MOSI,
-                                                                    EXAMPLE_LCD_H_RES * 80 * sizeof(uint16_t));
+    const spi_bus_config_t bus_config = GC9A01_PANEL_BUS_SPI_CONFIG(PIN_NUM_SCLK, PIN_NUM_MOSI,
+                                                                    LCD_H_RES * 80 * sizeof(uint16_t));
     ESP_ERROR_CHECK(spi_bus_initialize(SPI2_HOST, &bus_config, SPI_DMA_CH_AUTO));
 
     ESP_LOGI(TAG, "Install panel IO");
-    const esp_lcd_panel_io_spi_config_t io_config = GC9A01_PANEL_IO_SPI_CONFIG(EXAMPLE_PIN_NUM_LCD_CS, EXAMPLE_PIN_NUM_LCD_DC,
+    const esp_lcd_panel_io_spi_config_t io_config = GC9A01_PANEL_IO_SPI_CONFIG(PIN_NUM_LCD_CS, PIN_NUM_LCD_DC,
                                                                                NULL, NULL);
     ESP_ERROR_CHECK(esp_lcd_new_panel_io_spi((esp_lcd_spi_bus_handle_t)SPI2_HOST, &io_config, &io_handle));
 
     ESP_LOGI(TAG, "Install GC9A01 panel driver");
 
     const esp_lcd_panel_dev_config_t panel_config = {
-        .reset_gpio_num = EXAMPLE_PIN_NUM_LCD_RST,  // Set to -1 if not use
+        .reset_gpio_num =-1,   // Reset pin
         .rgb_ele_order = LCD_RGB_ELEMENT_ORDER_RGB, // RGB element order: R-G-B
         .bits_per_pixel = 16,
     };
@@ -99,7 +98,7 @@ void chsc6x_convert_xy(uint8_t *x, uint8_t *y)
     {
         x_tmp = *x;
         y_tmp = *y;
-        _end = (i % 2) ? EXAMPLE_LCD_V_RES : EXAMPLE_LCD_H_RES;
+        _end = (i % 2) ? LCD_V_RES : LCD_H_RES;
         *x = y_tmp;
         *y = _end - x_tmp;
     }
@@ -107,11 +106,11 @@ void chsc6x_convert_xy(uint8_t *x, uint8_t *y)
 
 bool chsc6x_is_pressed(void)
 {
-    if (gpio_get_level(TOUCH_INT) != 0)
+    if (gpio_get_level(PIN_NUM_TOUCH_CS) != 0)
         return false;
     {
         // vTaskDelay(pdMS_TO_TICKS(5));
-        if (gpio_get_level(TOUCH_INT) != 0)
+        if (gpio_get_level(PIN_NUM_TOUCH_CS) != 0)
             return false;
     }
     return true;

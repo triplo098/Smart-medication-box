@@ -4,32 +4,26 @@
 #include "lvgl.h"
 #include "pcf8563.h"
 
-#define EXAMPLE_LCD_PIXEL_CLOCK_HZ (20 * 1000 * 1000)
-#define EXAMPLE_LCD_BK_LIGHT_ON_LEVEL 1
-#define EXAMPLE_LCD_BK_LIGHT_OFF_LEVEL !EXAMPLE_LCD_BK_LIGHT_ON_LEVEL
-#define EXAMPLE_PIN_NUM_SCLK 7
-#define EXAMPLE_PIN_NUM_MOSI 9
-#define EXAMPLE_PIN_NUM_MISO 8 // Not used for round display
-#define EXAMPLE_PIN_NUM_LCD_DC 4
-#define EXAMPLE_PIN_NUM_LCD_RST 1
-#define EXAMPLE_PIN_NUM_LCD_CS 2
-#define EXAMPLE_PIN_NUM_BK_LIGHT 43
-#define EXAMPLE_PIN_NUM_TOUCH_CS 44 // Touch interrupt pin
+#define PIN_NUM_SCLK 7
+#define PIN_NUM_MOSI 9
+#define PIN_NUM_LCD_DC 4
+// #define PIN_NUM_LCD_RST 1
+#define PIN_NUM_LCD_CS 2
+#define PIN_NUM_TOUCH_CS 44 // Touch interrupt pin
 
 // The pixel number in horizontal and vertical
-#define EXAMPLE_LCD_H_RES 240
-#define EXAMPLE_LCD_V_RES 240 // Round display is 240x240
+#define LCD_H_RES 240
+#define LCD_V_RES 240 // Round display is 240x240
 
 // Bit number used to represent command and parameter
-#define EXAMPLE_LCD_CMD_BITS 8
-#define EXAMPLE_LCD_PARAM_BITS 8
-#define EXAMPLE_LVGL_DRAW_BUF_LINES 10 // Reduced for 240x240 display
-#define EXAMPLE_LVGL_TICK_PERIOD_MS 2
-#define EXAMPLE_LVGL_TASK_MAX_DELAY_MS 500
-#define EXAMPLE_LVGL_TASK_MIN_DELAY_MS 1000 / CONFIG_FREERTOS_HZ
-#define EXAMPLE_LVGL_TASK_STACK_SIZE (4 * 1024)
-#define EXAMPLE_LVGL_TASK_PRIORITY 2
-#define TOUCH_INT 44
+#define LCD_CMD_BITS 8
+#define LCD_PARAM_BITS 8
+#define LVGL_DRAW_BUF_LINES 10 // Reduced for 240x240 display
+#define LVGL_TICK_PERIOD_MS 2
+#define LVGL_TASK_MAX_DELAY_MS 500
+#define LVGL_TASK_MIN_DELAY_MS 1000 / CONFIG_FREERTOS_HZ
+#define LVGL_TASK_STACK_SIZE (4 * 1024)
+#define LVGL_TASK_PRIORITY 2
 
 #define CHSC6X_I2C_ADDR 0x2e
 
