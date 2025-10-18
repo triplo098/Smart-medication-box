@@ -3,6 +3,8 @@
 #include "freertos/task.h"
 #include <esp_log.h>
 #include <nvs_flash.h>
+#include <esp_sleep.h>
+
 
 #include "display_driver.h"
 #include "lvgl_screens.h"
@@ -17,6 +19,8 @@ i2c_dev_t chsc6x_dev;
 lv_obj_t *time_label;
 lv_indev_t *indev;
 
+static const char *TAG = "main";
+
 void app_main(void)
 {
     
@@ -28,10 +32,26 @@ void app_main(void)
     ESP_ERROR_CHECK(pcf8563_init_desc(&rtc_dev, 0, CONFIG_I2C_MASTER_SDA, CONFIG_I2C_MASTER_SCL));
 
     struct tm time = {0};
-    strptime(__DATE__, "%b %d %Y", &time);
-    strptime(__TIME__, "%H:%M:%S", &time);
+    bool valid_time = false;
+    pcf8563_get_time(&rtc_dev, &time, &valid_time);
 
-    ESP_ERROR_CHECK(pcf8563_set_time(&rtc_dev, &time));
+    esp_sleep_wakeup_cause_t wakeup_reason = esp_sleep_get_wakeup_cause();
+    ESP_LOGI(TAG, "Wakeup reason: %d", wakeup_reason);
+
+
+    if (valid_time)
+    {
+        ESP_LOGI(TAG, "Current time is valid");
+    }
+    else
+    {
+        ESP_LOGW(TAG, "Current time is NOT valid, setting to compile time");
+        strptime(__DATE__, "%b %d %Y", &time);
+        strptime(__TIME__, "%H:%M:%S", &time);
+        ESP_ERROR_CHECK(pcf8563_set_time(&rtc_dev, &time));
+    }
+
+
 
     // Display driver and LVGL init
     display_init();
