@@ -35,8 +35,8 @@ void app_main(void)
     bool valid_time = false;
     pcf8563_get_time(&rtc_dev, &time, &valid_time);
 
-    esp_sleep_wakeup_cause_t wakeup_reason = esp_sleep_get_wakeup_cause();
-    ESP_LOGI(TAG, "Wakeup reason: %d", wakeup_reason);
+    // esp_sleep_wakeup_cause_t wakeup_reason = esp_sleep_get_wakeup_cause();
+    // ESP_LOGI(TAG, "Wakeup reason: %d", wakeup_reason);
 
 
     if (valid_time)
