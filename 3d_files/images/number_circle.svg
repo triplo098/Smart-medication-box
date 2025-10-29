@@ -1,0 +1,137 @@
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Short vertical separators between each number -->
+  <g stroke="black" stroke-width="1">
+    <line x1="200" y1="12" x2="200" y2="28" transform="rotate(5.625 200 200)"/>
+    <line x1="200" y1="12" x2="200" y2="28" transform="rotate(16.875 200 200)"/>
+    <line x1="200" y1="12" x2="200" y2="28" transform="rotate(28.125 200 200)"/>
+    <line x1="200" y1="12" x2="200" y2="28" transform="rotate(39.375 200 200)"/>
+    <line x1="200" y1="12" x2="200" y2="28" transform="rotate(50.625 200 200)"/>
+    <line x1="200" y1="12" x2="200" y2="28" transform="rotate(61.875 200 200)"/>
+    <line x1="200" y1="12" x2="200" y2="28" transform="rotate(73.125 200 200)"/>
+    <line x1="200" y1="12" x2="200" y2="28" transform="rotate(84.375 200 200)"/>
+    <line x1="200" y1="12" x2="200" y2="28" transform="rotate(95.625 200 200)"/>
+    <line x1="200" y1="12" x2="200" y2="28" transform="rotate(106.875 200 200)"/>
+    <line x1="200" y1="12" x2="200" y2="28" transform="rotate(118.125 200 200)"/>
+    <line x1="200" y1="12" x2="200" y2="28" transform="rotate(129.375 200 200)"/>
+    <line x1="200" y1="12" x2="200" y2="28" transform="rotate(140.625 200 200)"/>
+    <line x1="200" y1="12" x2="200" y2="28" transform="rotate(151.875 200 200)"/>
+    <line x1="200" y1="12" x2="200" y2="28" transform="rotate(163.125 200 200)"/>
+    <line x1="200" y1="12" x2="200" y2="28" transform="rotate(174.375 200 200)"/>
+    <line x1="200" y1="12" x2="200" y2="28" transform="rotate(185.625 200 200)"/>
+    <line x1="200" y1="12" x2="200" y2="28" transform="rotate(196.875 200 200)"/>
+    <line x1="200" y1="12" x2="200" y2="28" transform="rotate(208.125 200 200)"/>
+    <line x1="200" y1="12" x2="200" y2="28" transform="rotate(219.375 200 200)"/>
+    <line x1="200" y1="12" x2="200" y2="28" transform="rotate(230.625 200 200)"/>
+    <line x1="200" y1="12" x2="200" y2="28" transform="rotate(241.875 200 200)"/>
+    <line x1="200" y1="12" x2="200" y2="28" transform="rotate(253.125 200 200)"/>
+    <line x1="200" y1="12" x2="200" y2="28" transform="rotate(264.375 200 200)"/>
+    <line x1="200" y1="12" x2="200" y2="28" transform="rotate(275.625 200 200)"/>
+    <line x1="200" y1="12" x2="200" y2="28" transform="rotate(286.875 200 200)"/>
+    <line x1="200" y1="12" x2="200" y2="28" transform="rotate(298.125 200 200)"/>
+    <line x1="200" y1="12" x2="200" y2="28" transform="rotate(309.375 200 200)"/>
+    <line x1="200" y1="12" x2="200" y2="28" transform="rotate(320.625 200 200)"/>
+    <line x1="200" y1="12" x2="200" y2="28" transform="rotate(331.875 200 200)"/>
+    <line x1="200" y1="12" x2="200" y2="28" transform="rotate(343.125 200 200)"/>
+    <line x1="200" y1="12" x2="200" y2="28" transform="rotate(354.375 200 200)"/>
+  </g>
+  
+  <!-- Numbers 0-31 arranged around the circle -->
+  <g font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="black">
+    <text x="200" y="28" transform="rotate(0 200 200)">
+      <tspan x="200" dy="0">0</tspan>
+    </text>
+    <text transform="rotate(11.25 200 200)">
+      <tspan x="200" y="28">1</tspan>
+    </text>
+    <text transform="rotate(22.5 200 200)">
+      <tspan x="200" y="28">2</tspan>
+    </text>
+    <text transform="rotate(33.75 200 200)">
+      <tspan x="200" y="28">3</tspan>
+    </text>
+    <text transform="rotate(45 200 200)">
+      <tspan x="200" y="28">4</tspan>
+    </text>
+    <text transform="rotate(56.25 200 200)">
+      <tspan x="200" y="28">5</tspan>
+    </text>
+    <text transform="rotate(67.5 200 200)">
+      <tspan x="200" y="28">6</tspan>
+    </text>
+    <text transform="rotate(78.75 200 200)">
+      <tspan x="200" y="28">7</tspan>
+    </text>
+    <text transform="rotate(90 200 200)">
+      <tspan x="200" y="28">8</tspan>
+    </text>
+    <text transform="rotate(101.25 200 200)">
+      <tspan x="200" y="28">9</tspan>
+    </text>
+    <text transform="rotate(112.5 200 200)">
+      <tspan x="200" y="28">10</tspan>
+    </text>
+    <text transform="rotate(123.75 200 200)">
+      <tspan x="200" y="28">11</tspan>
+    </text>
+    <text transform="rotate(135 200 200)">
+      <tspan x="200" y="28">12</tspan>
+    </text>
+    <text transform="rotate(146.25 200 200)">
+      <tspan x="200" y="28">13</tspan>
+    </text>
+    <text transform="rotate(157.5 200 200)">
+      <tspan x="200" y="28">14</tspan>
+    </text>
+    <text transform="rotate(168.75 200 200)">
+      <tspan x="200" y="28">15</tspan>
+    </text>
+    <text transform="rotate(180 200 200)">
+      <tspan x="200" y="28">16</tspan>
+    </text>
+    <text transform="rotate(191.25 200 200)">
+      <tspan x="200" y="28">17</tspan>
+    </text>
+    <text transform="rotate(202.5 200 200)">
+      <tspan x="200" y="28">18</tspan>
+    </text>
+    <text transform="rotate(213.75 200 200)">
+      <tspan x="200" y="28">19</tspan>
+    </text>
+    <text transform="rotate(225 200 200)">
+      <tspan x="200" y="28">20</tspan>
+    </text>
+    <text transform="rotate(236.25 200 200)">
+      <tspan x="200" y="28">21</tspan>
+    </text>
+    <text transform="rotate(247.5 200 200)">
+      <tspan x="200" y="28">22</tspan>
+    </text>
+    <text transform="rotate(258.75 200 200)">
+      <tspan x="200" y="28">23</tspan>
+    </text>
+    <text transform="rotate(270 200 200)">
+      <tspan x="200" y="28">24</tspan>
+    </text>
+    <text transform="rotate(281.25 200 200)">
+      <tspan x="200" y="28">25</tspan>
+    </text>
+    <text transform="rotate(292.5 200 200)">
+      <tspan x="200" y="28">26</tspan>
+    </text>
+    <text transform="rotate(303.75 200 200)">
+      <tspan x="200" y="28">27</tspan>
+    </text>
+    <text transform="rotate(315 200 200)">
+      <tspan x="200" y="28">28</tspan>
+    </text>
+    <text transform="rotate(326.25 200 200)">
+      <tspan x="200" y="28">29</tspan>
+    </text>
+    <text transform="rotate(337.5 200 200)">
+      <tspan x="200" y="28">30</tspan>
+    </text>
+    <text transform="rotate(348.75 200 200)">
+      <tspan x="200" y="28">31</tspan>
+    </text>
+  </g>
+</svg>
