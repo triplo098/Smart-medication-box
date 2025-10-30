@@ -25,15 +25,15 @@ void app_main(void)
 {
     
     // I2C init
-    ESP_ERROR_CHECK(i2cdev_init());
+    // ESP_ERROR_CHECK(i2cdev_init());
 
     // PCF8563 RTC
     memset(&rtc_dev, 0, sizeof(i2c_dev_t));
-    ESP_ERROR_CHECK(pcf8563_init_desc(&rtc_dev, 0, CONFIG_I2C_MASTER_SDA, CONFIG_I2C_MASTER_SCL));
+    // ESP_ERROR_CHECK(pcf8563_init_desc(&rtc_dev, 0, CONFIG_I2C_MASTER_SDA, CONFIG_I2C_MASTER_SCL));
 
     struct tm time = {0};
     bool valid_time = false;
-    pcf8563_get_time(&rtc_dev, &time, &valid_time);
+    // pcf8563_get_time(&rtc_dev, &time, &valid_time);
 
     // esp_sleep_wakeup_cause_t wakeup_reason = esp_sleep_get_wakeup_cause();
     // ESP_LOGI(TAG, "Wakeup reason: %d", wakeup_reason);
@@ -48,13 +48,13 @@ void app_main(void)
         ESP_LOGW(TAG, "Current time is NOT valid, setting to compile time");
         strptime(__DATE__, "%b %d %Y", &time);
         strptime(__TIME__, "%H:%M:%S", &time);
-        ESP_ERROR_CHECK(pcf8563_set_time(&rtc_dev, &time));
+        // ESP_ERROR_CHECK(pcf8563_set_time(&rtc_dev, &time));
     }
 
 
 
     // Display driver and LVGL init
-    display_init();
+    // display_init();
 
     lv_init();
     lv_tick_set_cb(xTaskGetTickCount);
@@ -67,19 +67,27 @@ void app_main(void)
 
     // Setting up touch I2c
     memset(&chsc6x_dev, 0, sizeof(i2c_dev_t));
-    chsc6x_init_desc(&chsc6x_dev, 0, CONFIG_I2C_MASTER_SDA, CONFIG_I2C_MASTER_SCL);
+    // chsc6x_init_desc(&chsc6x_dev, 0, CONFIG_I2C_MASTER_SDA, CONFIG_I2C_MASTER_SCL);
 
     
-    touch_init();
+    // touch_init();
+    // init_start_scr(NULL);
 
-    init_start_scr(NULL);
-
+    init_motor();
 
 
     while (1)
     {
         // Handle LVGL tasks
-        lv_timer_handler();
-        vTaskDelay(pdMS_TO_TICKS(100));
+        // lv_timer_handler();
+        // vTaskDelay(pdMS_TO_TICKS(100));
+
+        // For testing: Move motor to section 10 after 5 seconds
+        vTaskDelay(pdMS_TO_TICKS(5000));
+        ESP_LOGI(TAG, "Moving to section 10");
+        set_section(10);
+        vTaskDelay(pdMS_TO_TICKS(10000));
+        set_section(1);
+
     }
 }

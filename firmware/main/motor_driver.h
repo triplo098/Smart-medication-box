@@ -7,7 +7,7 @@
 
 #define NUMEBR_OF_SECTIONS 32
 #define MOTOR_STEPS_PER_REV 2048                                                                       // For 28BYJ-48 stepper motor
-#define MOTOR_REV_FOR_FULL_SECTIONS_REV 4 // 4:1 gear ration                                                              //
+#define MOTOR_REV_FOR_FULL_SECTIONS_REV 2 // 2:1 gear ration                                                              //
 #define STEPS_PER_SECTION (MOTOR_STEPS_PER_REV * MOTOR_REV_FOR_FULL_SECTIONS_REV / NUMEBR_OF_SECTIONS) // 512 steps per section
 
 void init_motor();

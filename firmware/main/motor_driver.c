@@ -65,7 +65,7 @@ static void set_step(unsigned int step_idx)
 void move_n_steps_task(void *pvParameter)
 {
 
-    signed int n = *((signed int *)pvParameter);
+    signed int n = (signed int) pvParameter;
     ESP_LOGI(TAG, "N: %d", n);
     ESP_LOGI(TAG, "Curent step: %d", current_step);
 
@@ -108,7 +108,7 @@ esp_err_t set_section(unsigned int target_section)
 
     signed int target_steps = section_to_steps(target_section);
 
-    ESP_LOGI(TAG, "current: %d, target: %d, section move: %d", current_section, target_section, (target_steps / STEPS_PER_SECTION));
+    ESP_LOGI(TAG, "current: %d, target: %d, section move: %d, target_steps: %d", current_section, target_section, (target_steps / STEPS_PER_SECTION), target_steps);
 
     if (target_steps == 0)
     {
@@ -118,7 +118,7 @@ esp_err_t set_section(unsigned int target_section)
 
     if (move_motor_task_handle == NULL)
     {
-        xTaskCreate(move_n_steps_task, "move_motor_task", 2048, (void *)&target_steps, 1, &move_motor_task_handle);
+        xTaskCreate(move_n_steps_task, "move_motor_task", 2048, (void *)target_steps, 1, &move_motor_task_handle);
     }
     else
     {
