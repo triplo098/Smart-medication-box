@@ -75,6 +75,8 @@ void app_main(void)
 
     init_motor();
 
+    uint16_t section = 1;
+    bool dir = true;
 
     while (1)
     {
@@ -83,11 +85,29 @@ void app_main(void)
         // vTaskDelay(pdMS_TO_TICKS(100));
 
         // For testing: Move motor to section 10 after 5 seconds
-        vTaskDelay(pdMS_TO_TICKS(5000));
+        vTaskDelay(pdMS_TO_TICKS(3000));
         ESP_LOGI(TAG, "Moving to section 10");
-        set_section(10);
-        vTaskDelay(pdMS_TO_TICKS(10000));
-        set_section(1);
+        set_section(section);
+
+        if(dir)
+        {
+            section++;
+            if(section > 10)
+            {
+                dir = false;
+                section = 9;
+            }
+        }
+        else
+        {
+            section--;
+            if(section < 1)
+            {
+                dir = true;
+                section = 2;
+            }
+        }
+
 
     }
 }
