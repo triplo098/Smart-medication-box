@@ -8,6 +8,7 @@
 #include "display_driver.h"
 #include "lvgl_default_scr.h"
 #include "motor_driver.h"
+#include "medicines_managment.h"
 
 #define I2C_MASTER_SDA_PIN 5
 #define I2C_MASTER_SCL_PIN 6
@@ -19,6 +20,16 @@ lv_obj_t *time_label;   // LVGL label to display time
 lv_indev_t *indev;      // LVGL input device for touch
 
 static const char *TAG = "main";
+
+void lvgl_task(void *arg)
+{
+    while (1)
+    {
+        lv_timer_handler(); // Handle LVGL tasks
+        vTaskDelay(pdMS_TO_TICKS(100));
+    }
+}
+
 
 void app_main(void)
 {
@@ -69,11 +80,31 @@ void app_main(void)
     // Initialize motor driver
     init_motor();
 
-    while (1)
-    {
-        // Handle LVGL tasks
-        lv_timer_handler();
-        vTaskDelay(pdMS_TO_TICKS(100));
+    add_medicine((medicine_t){
+        .name = "Medicine A",
+        .doses_per_day = 2,
+        .dose_times = {
+            {.tm_hour = 9, .tm_min = 0},
+            {.tm_hour = 21, .tm_min = 0}
+        },
+        .special_requirements = "Take after meals",
+        .treatment_days_left = 10
+    });
 
-    }
+    add_medicine((medicine_t){
+        .name = "Medicine B",
+        .doses_per_day = 3,
+        .dose_times = {
+            {.tm_hour = 8, .tm_min = 30},
+            {.tm_hour = 14, .tm_min = 30},
+            {.tm_hour = 20, .tm_min = 30}
+        },
+        .special_requirements = "Take with water",
+        .treatment_days_left = 5
+    });
+    
+
+    ESP_LOGI(TAG, "Entering LVGL task loop");
+    xTaskCreate(lvgl_task, "LVGL", 8192, NULL, 2, NULL);
+
 }

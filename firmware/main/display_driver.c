@@ -34,7 +34,7 @@ void display_init(void)
 
     const esp_lcd_panel_dev_config_t panel_config = {
         .reset_gpio_num =-1,   // Reset pin
-        .rgb_ele_order = LCD_RGB_ELEMENT_ORDER_RGB, // RGB element order: R-G-B
+        .rgb_ele_order = LCD_RGB_ELEMENT_ORDER_BGR,
         .bits_per_pixel = 16,
     };
     ESP_ERROR_CHECK(esp_lcd_new_panel_gc9a01(io_handle, &panel_config, &panel_handle));
@@ -43,8 +43,10 @@ void display_init(void)
     ESP_ERROR_CHECK(esp_lcd_panel_disp_on_off(panel_handle, true));
 
     esp_lcd_panel_mirror(panel_handle, true, false);
-
+    esp_lcd_panel_invert_color(panel_handle, true);
+    
     screen_rotation = 0;
+
 
     ESP_LOGI(TAG, "Display initialized");
 }
@@ -81,6 +83,8 @@ void lvgl_update_time_cb()
         lv_label_set_text(time_label, buf);
     }
 }
+
+
 
 esp_err_t chsc6x_init_desc(i2c_dev_t *dev, i2c_port_t port, gpio_num_t sda_gpio, gpio_num_t scl_gpio)
 {

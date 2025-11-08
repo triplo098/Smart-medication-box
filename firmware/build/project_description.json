@@ -1,7 +1,7 @@
 {
     "version":            "1.2",
     "project_name":       "main",
-    "project_version":    "dc78743-dirty",
+    "project_version":    "b285095-dirty",
     "project_path":       "/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware",
     "idf_path":           "/home/piotr/esp/esp-idf",
     "build_dir":          "/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/build",
@@ -1930,8 +1930,8 @@
             "managed_reqs": [],
             "managed_priv_reqs": [ "espressif__esp_lcd_gc9a01" ],
             "file": "/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/build/esp-idf/main/libmain.a",
-            "sources": [ "/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/main/motor_driver.c", "/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/main/main.c", "/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/main/display_driver.c", "/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/main/lvgl_screens.c" ],
-            "include_dirs": [ "." ]
+            "sources": [ "/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/main/motor_driver.c", "/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/main/main.c", "/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/main/display_driver.c", "/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/main/lvgl_default_scr.c", "/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/main/lvgl_medications_list_scr.c", "/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/main/medicines_managment.c" ],
+            "include_dirs": [ ".", "include" ]
         },
         "max1704x": {
             "alias": "idf::max1704x",
@@ -4366,7 +4366,7 @@
             "priv_reqs": [ "espressif__esp_lcd_gc9a01" ],
             "managed_reqs": [],
             "managed_priv_reqs": [ "espressif__esp_lcd_gc9a01" ],
-            "include_dirs": [ "." ]
+            "include_dirs": [ ".", "include" ]
         },
         "ads111x": {
             "alias": "idf::ads111x",
