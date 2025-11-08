@@ -5,19 +5,18 @@
 #include <nvs_flash.h>
 #include <esp_sleep.h>
 
-
 #include "display_driver.h"
-#include "lvgl_screens.h"
+#include "lvgl_default_scr.h"
 #include "motor_driver.h"
 
-#define CONFIG_I2C_MASTER_SDA 5
-#define CONFIG_I2C_MASTER_SCL 6
+#define I2C_MASTER_SDA_PIN 5
+#define I2C_MASTER_SCL_PIN 6
 
-i2c_dev_t rtc_dev;
-i2c_dev_t chsc6x_dev;
+i2c_dev_t rtc_dev;      // PCF8563 RTC device descriptor
+i2c_dev_t chsc6x_dev;   // CHSC6X Touch controller device descriptor
 
-lv_obj_t *time_label;
-lv_indev_t *indev;
+lv_obj_t *time_label;   // LVGL label to display time
+lv_indev_t *indev;      // LVGL input device for touch
 
 static const char *TAG = "main";
 
@@ -25,19 +24,15 @@ void app_main(void)
 {
     
     // I2C init
-    // ESP_ERROR_CHECK(i2cdev_init());
+    ESP_ERROR_CHECK(i2cdev_init());
 
     // PCF8563 RTC
     memset(&rtc_dev, 0, sizeof(i2c_dev_t));
-    // ESP_ERROR_CHECK(pcf8563_init_desc(&rtc_dev, 0, CONFIG_I2C_MASTER_SDA, CONFIG_I2C_MASTER_SCL));
+    ESP_ERROR_CHECK(pcf8563_init_desc(&rtc_dev, 0, I2C_MASTER_SDA_PIN, I2C_MASTER_SCL_PIN));
 
     struct tm time = {0};
     bool valid_time = false;
-    // pcf8563_get_time(&rtc_dev, &time, &valid_time);
-
-    // esp_sleep_wakeup_cause_t wakeup_reason = esp_sleep_get_wakeup_cause();
-    // ESP_LOGI(TAG, "Wakeup reason: %d", wakeup_reason);
-
+    pcf8563_get_time(&rtc_dev, &time, &valid_time);
 
     if (valid_time)
     {
@@ -48,14 +43,11 @@ void app_main(void)
         ESP_LOGW(TAG, "Current time is NOT valid, setting to compile time");
         strptime(__DATE__, "%b %d %Y", &time);
         strptime(__TIME__, "%H:%M:%S", &time);
-        // ESP_ERROR_CHECK(pcf8563_set_time(&rtc_dev, &time));
+        ESP_ERROR_CHECK(pcf8563_set_time(&rtc_dev, &time));
     }
 
-
-
     // Display driver and LVGL init
-    // display_init();
-
+    display_init();
     lv_init();
     lv_tick_set_cb(xTaskGetTickCount);
 
@@ -67,47 +59,21 @@ void app_main(void)
 
     // Setting up touch I2c
     memset(&chsc6x_dev, 0, sizeof(i2c_dev_t));
-    // chsc6x_init_desc(&chsc6x_dev, 0, CONFIG_I2C_MASTER_SDA, CONFIG_I2C_MASTER_SCL);
+    chsc6x_init_desc(&chsc6x_dev, 0, I2C_MASTER_SDA_PIN, I2C_MASTER_SCL_PIN);
+    touch_init();
 
-    
-    // touch_init();
-    // init_start_scr(NULL);
 
+    // Default screen
+    init_lvgl_default_scr(NULL);
+
+    // Initialize motor driver
     init_motor();
-
-    uint16_t section = 1;
-    bool dir = true;
 
     while (1)
     {
         // Handle LVGL tasks
-        // lv_timer_handler();
-        // vTaskDelay(pdMS_TO_TICKS(100));
-
-        // For testing: Move motor to section 10 after 5 seconds
-        vTaskDelay(pdMS_TO_TICKS(3000));
-        ESP_LOGI(TAG, "Moving to section 10");
-        set_section(section);
-
-        if(dir)
-        {
-            section++;
-            if(section > 10)
-            {
-                dir = false;
-                section = 9;
-            }
-        }
-        else
-        {
-            section--;
-            if(section < 1)
-            {
-                dir = true;
-                section = 2;
-            }
-        }
-
+        lv_timer_handler();
+        vTaskDelay(pdMS_TO_TICKS(100));
 
     }
 }

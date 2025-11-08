@@ -3,10 +3,6 @@
 #include <esp_log.h>
 #include <limits.h>
 
-#define INT1_PIN 1
-#define INT2_PIN 3
-#define INT3_PIN 8
-#define INT4_PIN 43
 
 static const char *TAG = "motor_driver";
 
@@ -55,7 +51,6 @@ void init_motor()
 
 static void set_step(unsigned int step_idx)
 {
-
     gpio_set_level(INT1_PIN, setps_sequence[step_idx][0]);
     gpio_set_level(INT2_PIN, setps_sequence[step_idx][1]);
     gpio_set_level(INT3_PIN, setps_sequence[step_idx][2]);
