@@ -16,6 +16,19 @@
         "limits.h": "c",
         "cstdlib": "c",
         "esp_log.h": "c",
-        "esp_sleep.h": "c"
-    }
+        "esp_sleep.h": "c",
+        "lvgl_default_scr.h": "c",
+        "lvgl_medications_list_scr.h": "c",
+        "time.h": "c",
+        "types.h": "c",
+        "limits": "c",
+        "numbers": "c",
+        "medicines_managment.h": "c",
+        "nvs_flash.h": "c",
+        "gpio.h": "c"
+    },
+    "idf.openOcdConfigs": [
+        "board/esp32s3-builtin.cfg"
+    ],
+    "idf.port": "/dev/ttyACM0"
 }

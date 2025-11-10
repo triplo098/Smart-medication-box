@@ -4,6 +4,9 @@
 #include "lvgl.h"
 #include "pcf8563.h"
 
+#define I2C_MASTER_SDA_PIN 5
+#define I2C_MASTER_SCL_PIN 6
+
 #define PIN_NUM_SCLK 7
 #define PIN_NUM_MOSI 9
 #define PIN_NUM_LCD_DC 4

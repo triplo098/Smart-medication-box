@@ -10,8 +10,6 @@
 #include "motor_driver.h"
 #include "medicines_managment.h"
 
-#define I2C_MASTER_SDA_PIN 5
-#define I2C_MASTER_SCL_PIN 6
 
 i2c_dev_t rtc_dev;      // PCF8563 RTC device descriptor
 i2c_dev_t chsc6x_dev;   // CHSC6X Touch controller device descriptor
