@@ -9,7 +9,9 @@ static volatile bool alarmEnabled = false;
 static TaskHandle_t alarmTaskHandle = NULL;
 
 esp_err_t alarm_gpio_init()
-{
+{   
+    ESP_LOGI(TAG, "Initialazing alarm");
+
     gpio_reset_pin(BUZZER_PIN);
     gpio_set_direction(BUZZER_PIN, GPIO_MODE_OUTPUT);
     gpio_set_level(BUZZER_PIN, 0);
@@ -24,11 +26,16 @@ static void alarm_task(void *arg)
     {
         if (!alarmEnabled) break;
 
+        // Alarm sequence
         gpio_set_level(BUZZER_PIN, 1);
-        vTaskDelay(pdMS_TO_TICKS(200));
+        vTaskDelay(pdMS_TO_TICKS(100));
+        gpio_set_level(BUZZER_PIN, 0);
+        vTaskDelay(pdMS_TO_TICKS(100));
+        gpio_set_level(BUZZER_PIN, 1);
+        vTaskDelay(pdMS_TO_TICKS(100));
 
         gpio_set_level(BUZZER_PIN, 0);
-        vTaskDelay(pdMS_TO_TICKS(1800));
+        vTaskDelay(pdMS_TO_TICKS(900));
     }
 
     // Ensure buzzer is off
@@ -54,7 +61,7 @@ void turn_alarm(bool turn)
                 "alarm_task",
                 2048,
                 NULL,
-                3,
+                2,
                 &alarmTaskHandle
             );
             ESP_LOGI(TAG, "Alarm started");

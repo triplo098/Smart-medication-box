@@ -4,6 +4,7 @@
 #include <esp_log.h>
 #include <nvs_flash.h>
 #include <esp_sleep.h>
+#include "esp_heap_caps.h"
 
 #include "display_driver.h"
 #include "lvgl_default_scr.h"
@@ -13,25 +14,20 @@
 
 
 
+
 i2c_dev_t rtc_dev;      // PCF8563 RTC device descriptor
 i2c_dev_t chsc6x_dev;   // CHSC6X Touch controller device descriptor
 
 lv_obj_t *time_label;   // LVGL label to display time
 lv_indev_t *indev;      // LVGL input device for touch
 
+extern medicine_t** medicines_list;
+
+
 static const char *TAG = "main";
 
 void lvgl_task(void *arg)
 {   
-
-    vTaskDelay(pdMS_TO_TICKS(100));
-    turn_alarm(true);
-    vTaskDelay(pdMS_TO_TICKS(5000));
-    turn_alarm(false);
-    vTaskDelay(pdMS_TO_TICKS(5000));
-    turn_alarm(true);
-
-
     while (1)
     {
         lv_timer_handler(); // Handle LVGL tasks
@@ -82,6 +78,8 @@ void app_main(void)
     chsc6x_init_desc(&chsc6x_dev, 0, I2C_MASTER_SDA_PIN, I2C_MASTER_SCL_PIN);
     touch_init();
 
+    // Allocate memory for list of pointers to medicines
+    medicines_list = heap_caps_calloc(MAX_MEDICINES_TOTAL, sizeof(medicine_t *), MALLOC_CAP_8BIT);
 
     // Default screen
     init_lvgl_default_scr(NULL);
@@ -92,32 +90,36 @@ void app_main(void)
     // Init alarm
     alarm_gpio_init();
 
-
-    add_medicine((medicine_t){
-        .name = "Medicine A",
-        .doses_per_day = 2,
-        .dose_times = {
-            {.tm_hour = 9, .tm_min = 0},
-            {.tm_hour = 21, .tm_min = 0}
-        },
-        .special_requirements = "Take after meals",
-        .treatment_days_left = 10
-    });
-
-    add_medicine((medicine_t){
-        .name = "Medicine B",
-        .doses_per_day = 3,
-        .dose_times = {
-            {.tm_hour = 8, .tm_min = 30},
-            {.tm_hour = 14, .tm_min = 30},
-            {.tm_hour = 20, .tm_min = 30}
-        },
-        .special_requirements = "Take with water",
-        .treatment_days_left = 5
-    });
+    medicine_t* medicine_A_p = heap_caps_malloc(sizeof(medicine_t), MALLOC_CAP_8BIT);
+    strcpy(medicine_A_p->name, "Medicine A");
+    medicine_A_p->doses_per_day = 3;
+    medicine_A_p->dose_times[0].hour = 8;   // First dose at 8 AM
+    medicine_A_p->dose_times[0].minute = 0;
+    medicine_A_p->dose_times[1].hour = 12;  // Second dose at 12 PM
+    medicine_A_p->dose_times[1].minute = 0;
+    medicine_A_p->dose_times[2].hour = 18;  // Third dose at 6 PM
+    medicine_A_p->dose_times[2].minute = 0;
+    strcpy(medicine_A_p->special_requirements, "Take after meals");
+    medicine_A_p->treatment_start_date = time; // Set start date to current time
+    medicine_A_p->treatment_end_date = time; 
     
+    add_medicine(medicine_A_p);
+
+    medicine_t* medicine_B_p = heap_caps_malloc(sizeof(medicine_t), MALLOC_CAP_8BIT);
+    strcpy(medicine_B_p->name, "Medicine B");
+    medicine_B_p->doses_per_day = 2;
+    medicine_B_p->dose_times[0].hour = 9;   // First dose at 9 AM
+    medicine_B_p->dose_times[0].minute = 30;
+    medicine_B_p->dose_times[1].hour = 21;  // Second dose at 9 PM
+    medicine_B_p->dose_times[1].minute = 30;
+    strcpy(medicine_B_p->special_requirements, "Take with water");
+    medicine_B_p->treatment_start_date = time; // Set start date to current time
+    medicine_B_p->treatment_end_date = time; 
+
+    add_medicine(medicine_B_p);
+
     
     ESP_LOGI(TAG, "Entering LVGL task loop");
-    xTaskCreate(lvgl_task, "LVGL", 8192, NULL, 2, NULL);
+    xTaskCreate(lvgl_task, "LVGL", 8192, NULL, 5, NULL);
 
 }
