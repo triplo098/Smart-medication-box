@@ -9,6 +9,8 @@
 #include "lvgl_default_scr.h"
 #include "motor_driver.h"
 #include "medicines_managment.h"
+#include "alarm_helpers.h"
+
 
 
 i2c_dev_t rtc_dev;      // PCF8563 RTC device descriptor
@@ -20,7 +22,16 @@ lv_indev_t *indev;      // LVGL input device for touch
 static const char *TAG = "main";
 
 void lvgl_task(void *arg)
-{
+{   
+
+    vTaskDelay(pdMS_TO_TICKS(100));
+    turn_alarm(true);
+    vTaskDelay(pdMS_TO_TICKS(5000));
+    turn_alarm(false);
+    vTaskDelay(pdMS_TO_TICKS(5000));
+    turn_alarm(true);
+
+
     while (1)
     {
         lv_timer_handler(); // Handle LVGL tasks
@@ -78,6 +89,10 @@ void app_main(void)
     // Initialize motor driver
     init_motor();
 
+    // Init alarm
+    alarm_gpio_init();
+
+
     add_medicine((medicine_t){
         .name = "Medicine A",
         .doses_per_day = 2,
@@ -101,7 +116,7 @@ void app_main(void)
         .treatment_days_left = 5
     });
     
-
+    
     ESP_LOGI(TAG, "Entering LVGL task loop");
     xTaskCreate(lvgl_task, "LVGL", 8192, NULL, 2, NULL);
 
