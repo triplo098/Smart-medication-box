@@ -23,6 +23,7 @@ lv_indev_t *indev;      // LVGL input device for touch
 
 extern medicine_t** medicines_list;
 
+struct tm current_time;
 
 static const char *TAG = "main";
 
@@ -46,9 +47,8 @@ void app_main(void)
     memset(&rtc_dev, 0, sizeof(i2c_dev_t));
     ESP_ERROR_CHECK(pcf8563_init_desc(&rtc_dev, 0, I2C_MASTER_SDA_PIN, I2C_MASTER_SCL_PIN));
 
-    struct tm time = {0};
     bool valid_time = false;
-    pcf8563_get_time(&rtc_dev, &time, &valid_time);
+    pcf8563_get_time(&rtc_dev, &current_time, &valid_time);
 
     if (valid_time)
     {
@@ -57,10 +57,19 @@ void app_main(void)
     else
     {
         ESP_LOGW(TAG, "Current time is NOT valid, setting to compile time");
-        strptime(__DATE__, "%b %d %Y", &time);
-        strptime(__TIME__, "%H:%M:%S", &time);
-        ESP_ERROR_CHECK(pcf8563_set_time(&rtc_dev, &time));
+        strptime(__DATE__, "%b %d %Y", &current_time);
+        strptime(__TIME__, "%H:%M:%S", &current_time);
+        ESP_ERROR_CHECK(pcf8563_set_time(&rtc_dev, &current_time));
     }
+
+    ESP_LOGI(TAG, "Current time: %04d-%02d-%02d %02d:%02d:%02d",
+             current_time.tm_year + 1900,
+             current_time.tm_mon + 1,
+             current_time.tm_mday,
+             current_time.tm_hour,
+             current_time.tm_min,
+             current_time.tm_sec);
+
 
     // Display driver and LVGL init
     display_init();
@@ -100,8 +109,8 @@ void app_main(void)
     medicine_A_p->dose_times[2].hour = 18;  // Third dose at 6 PM
     medicine_A_p->dose_times[2].minute = 0;
     strcpy(medicine_A_p->special_requirements, "Take after meals");
-    medicine_A_p->treatment_start_date = time; // Set start date to current time
-    medicine_A_p->treatment_end_date = time; 
+    medicine_A_p->treatment_start_date = current_time; // Set start date to current time
+    medicine_A_p->treatment_end_date = current_time; 
     
     add_medicine(medicine_A_p);
 
@@ -113,12 +122,20 @@ void app_main(void)
     medicine_B_p->dose_times[1].hour = 21;  // Second dose at 9 PM
     medicine_B_p->dose_times[1].minute = 30;
     strcpy(medicine_B_p->special_requirements, "Take with water");
-    medicine_B_p->treatment_start_date = time; // Set start date to current time
-    medicine_B_p->treatment_end_date = time; 
+    medicine_B_p->treatment_start_date = current_time; // Set start date to current current_time
+    medicine_B_p->treatment_end_date = current_time; 
 
     add_medicine(medicine_B_p);
 
-    
+     ESP_LOGI(TAG, "Current time: %04d-%02d-%02d %02d:%02d:%02d",
+             current_time.tm_year + 1900,
+             current_time.tm_mon + 1,
+             current_time.tm_mday,
+             current_time.tm_hour,
+             current_time.tm_min,
+             current_time.tm_sec);
+
+
     ESP_LOGI(TAG, "Entering LVGL task loop");
     xTaskCreate(lvgl_task, "LVGL", 8192, NULL, 5, NULL);
 

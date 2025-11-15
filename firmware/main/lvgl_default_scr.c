@@ -1,7 +1,7 @@
 
 // LVGL screens includes
 #include "lvgl_default_scr.h"
-#include "lvgl_medications_list_scr.h"
+#include "lvgl_medicines_list_scr.h"
 
 // Other includes
 #include "display_driver.h"
@@ -67,7 +67,7 @@ static void show_medicine_list_btn_event_handler(lv_event_t *e)
         // Code to handle button press
         lv_obj_set_style_bg_color(btn, lv_color_hex(0x0D47A1), 0); // Darker blue on press
         
-        init_lvgl_medications_list_scr();
+        init_lvgl_medicines_list_scr();
     }
     else if (code == LV_EVENT_RELEASED || code == LV_EVENT_PRESS_LOST)
     {
@@ -97,7 +97,7 @@ static void back_to_start_btn_event_handler(lv_event_t *e)
 void add_back_btn(lv_obj_t *scr) {
     lv_obj_t *back_btn = lv_btn_create(scr);
     lv_obj_set_size(back_btn, 30, 30);
-    lv_obj_align(back_btn, LV_ALIGN_BOTTOM_MID, -25, -20);
+    lv_obj_align(back_btn, LV_ALIGN_BOTTOM_MID, -25, -15);
     lv_obj_set_style_bg_color(back_btn, LVGL_DARK_BLUE_COLOR, 0);
     lv_obj_set_style_radius(back_btn, 8, 0);
     lv_obj_t *back_label = lv_label_create(back_btn);

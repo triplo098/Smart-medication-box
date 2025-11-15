@@ -70,7 +70,7 @@ void get_next_medicine_time(time_mh_t *next_time)
 
     if (nearest_ts == LONG_MAX)
     {
-        ESP_LOGE(TAG, "No medication times found!");
+        ESP_LOGE(TAG, "No medicine times found!");
         next_time->hour = 0;
         next_time->minute = 0;
         return;
