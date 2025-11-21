@@ -1,6 +1,8 @@
 #include "lvgl_add_medicine_scr.h"
 #include "lvgl_medicines_list_scr.h"
 #include "lvgl_default_scr.h"
+#include "motor_driver.h"
+#include "alarm_helpers.h"
 // #include "lvgl_keyboard_scr.h"
 // #include "lvgl_calendar_scr.h"
 // #include "lvgl_time_picker_scr.h"
@@ -161,9 +163,7 @@ void init_lvgl_add_medicine_scr(medicine_t* medicine)
     lv_obj_set_style_text_color(special_req_label, LVGL_BLACK_COLOR, 0);
     lv_obj_set_width(special_req_label, lv_pct(90)); // Set width for scrolling
     lv_obj_center(special_req_label);
-
-
-
+ 
 
     // Back button (blue circle with arrow)
     add_back_btn(scr);
@@ -188,6 +188,8 @@ static void name_btn_event_handler(lv_event_t *e)
         ESP_LOGI(TAG, "Name input clicked - opening keyboard");
         // TODO: Open keyboard screen
         // init_lvgl_keyboard_scr(new_medicine.name, sizeof(new_medicine.name), update_name_callback);
+
+        set_section(10);
     }
     else if (code == LV_EVENT_RELEASED || code == LV_EVENT_PRESS_LOST)
     {
@@ -206,6 +208,7 @@ static void frequency_btn_event_handler(lv_event_t *e)
     }
     else if (code == LV_EVENT_CLICKED)
     {
+        set_section(5);
         ESP_LOGI(TAG, "Frequency input clicked - opening frequency selector");
         // TODO: Open frequency selector (roller or number picker)
         // For now, simulate setting frequency to 2
@@ -229,6 +232,7 @@ static void start_date_btn_event_handler(lv_event_t *e)
     }
     else if (code == LV_EVENT_CLICKED)
     {
+        turn_alarm(true);
         ESP_LOGI(TAG, "Start date clicked - opening calendar");
         // TODO: Open calendar screen
         // init_lvgl_calendar_scr(&new_medicine.treatment_start_date, update_start_date_callback);
