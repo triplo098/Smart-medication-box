@@ -9,8 +9,6 @@
 #include "lvgl.h"
 #include "pcf8563.h"
 
-// 0x2e
-#define CHSC6X_I2C_ID 44
 #define CHSC6X_READ_POINT_LEN 5
 
 static const char *TAG = "display_driver";
@@ -92,6 +90,7 @@ esp_err_t chsc6x_init_desc(i2c_dev_t *dev, i2c_port_t port, gpio_num_t sda_gpio,
     dev->addr = CHSC6X_I2C_ADDR;
     dev->cfg.sda_io_num = sda_gpio;
     dev->cfg.scl_io_num = scl_gpio;
+    dev->cfg.master.clk_speed = 400000; 
     return i2c_dev_create_mutex(dev);
 }
 

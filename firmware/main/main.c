@@ -47,8 +47,12 @@ void app_main(void)
     memset(&rtc_dev, 0, sizeof(i2c_dev_t));
     ESP_ERROR_CHECK(pcf8563_init_desc(&rtc_dev, 0, I2C_MASTER_SDA_PIN, I2C_MASTER_SCL_PIN));
 
+
     bool valid_time = false;
     pcf8563_get_time(&rtc_dev, &current_time, &valid_time);
+
+    
+    valid_time = false;
 
     if (valid_time)
     {
@@ -62,6 +66,7 @@ void app_main(void)
         ESP_ERROR_CHECK(pcf8563_set_time(&rtc_dev, &current_time));
     }
 
+    pcf8563_get_time(&rtc_dev, &current_time, &valid_time);
     ESP_LOGI(TAG, "Current time: %04d-%02d-%02d %02d:%02d:%02d",
              current_time.tm_year + 1900,
              current_time.tm_mon + 1,
@@ -82,7 +87,7 @@ void app_main(void)
     lv_display_set_buffers(display, buf, NULL, sizeof(buf), LV_DISPLAY_RENDER_MODE_PARTIAL);
     lv_display_set_flush_cb(display, my_flush_cb); // Set the flush callback
 
-    // Setting up touch I2c
+    // Setting up touch I2C
     memset(&chsc6x_dev, 0, sizeof(i2c_dev_t));
     chsc6x_init_desc(&chsc6x_dev, 0, I2C_MASTER_SDA_PIN, I2C_MASTER_SCL_PIN);
     touch_init();

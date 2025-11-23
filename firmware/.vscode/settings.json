@@ -25,7 +25,14 @@
         "numbers": "c",
         "medicines_managment.h": "c",
         "nvs_flash.h": "c",
-        "gpio.h": "c"
+        "gpio.h": "c",
+        "freertos.h": "c",
+        "alarm_helpers.h": "c",
+        "stdbool.h": "c",
+        "lvgl_add_medication_scr.h": "c",
+        "lvgl_add_medicine_scr.h": "c",
+        "global_time_managment.h": "c",
+        "motor_driver.h": "c"
     },
     "idf.openOcdConfigs": [
         "board/esp32s3-builtin.cfg"

@@ -3,13 +3,12 @@
 #include <esp_log.h>
 #include <limits.h>
 
-
 static const char *TAG = "motor_driver";
 
 unsigned int current_step = 0;
 unsigned int current_section = 0;
 
-static unsigned int setps_sequence[4][4] = {
+static uint8_t setps_sequence[4][4] = {
     {1, 0, 0, 0},
     {0, 1, 0, 0},
     {0, 0, 1, 0},
@@ -46,6 +45,11 @@ void init_motor()
     gpio_set_direction(INT3_PIN, GPIO_MODE_OUTPUT);
     gpio_set_direction(INT4_PIN, GPIO_MODE_OUTPUT);
 
+    gpio_set_level(INT1_PIN, 0);
+    gpio_set_level(INT2_PIN, 0);
+    gpio_set_level(INT3_PIN, 0);
+    gpio_set_level(INT4_PIN, 0);
+
     ESP_LOGI(TAG, "Motors GPIOs initialized");
 }
 
@@ -60,7 +64,7 @@ static void set_step(unsigned int step_idx)
 void move_n_steps_task(void *pvParameter)
 {
 
-    signed int n = (signed int) pvParameter;
+    signed int n = (signed int)pvParameter;
     ESP_LOGI(TAG, "N: %d", n);
     ESP_LOGI(TAG, "Curent step: %d", current_step);
 
@@ -109,7 +113,6 @@ esp_err_t set_section(unsigned int target_section)
     {
         return ESP_OK;
     }
-    // MAKE MOVE
 
     if (move_motor_task_handle == NULL)
     {
