@@ -32,7 +32,8 @@
         "lvgl_add_medication_scr.h": "c",
         "lvgl_add_medicine_scr.h": "c",
         "global_time_managment.h": "c",
-        "motor_driver.h": "c"
+        "motor_driver.h": "c",
+        "lvgl_medicines_list_scr.h": "c"
     },
     "idf.openOcdConfigs": [
         "board/esp32s3-builtin.cfg"

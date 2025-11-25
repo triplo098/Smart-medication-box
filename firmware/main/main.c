@@ -32,7 +32,7 @@ void lvgl_task(void *arg)
     while (1)
     {
         lv_timer_handler(); // Handle LVGL tasks
-        vTaskDelay(pdMS_TO_TICKS(100));
+        vTaskDelay(pdMS_TO_TICKS(50));
     }
 }
 
@@ -65,8 +65,18 @@ void app_main(void)
         strptime(__TIME__, "%H:%M:%S", &current_time);
         ESP_ERROR_CHECK(pcf8563_set_time(&rtc_dev, &current_time));
     }
+    ESP_LOGI(TAG, "Current time: %04d-%02d-%02d %02d:%02d:%02d",
+             current_time.tm_year + 1900,
+             current_time.tm_mon + 1,
+             current_time.tm_mday,
+             current_time.tm_hour,
+             current_time.tm_min,
+             current_time.tm_sec);
+
 
     pcf8563_get_time(&rtc_dev, &current_time, &valid_time);
+    
+    
     ESP_LOGI(TAG, "Current time: %04d-%02d-%02d %02d:%02d:%02d",
              current_time.tm_year + 1900,
              current_time.tm_mon + 1,
@@ -116,7 +126,7 @@ void app_main(void)
     strcpy(medicine_A_p->special_requirements, "Take after meals");
     medicine_A_p->treatment_start_date = current_time; // Set start date to current time
     medicine_A_p->treatment_end_date = current_time; 
-    
+    medicine_A_p->treatment_end_date.tm_mday += 7; // Set treatment end date to 7 days later
     add_medicine(medicine_A_p);
 
     medicine_t* medicine_B_p = heap_caps_malloc(sizeof(medicine_t), MALLOC_CAP_8BIT);
@@ -124,11 +134,14 @@ void app_main(void)
     medicine_B_p->doses_per_day = 2;
     medicine_B_p->dose_times[0].hour = 9;   // First dose at 9 AM
     medicine_B_p->dose_times[0].minute = 30;
-    medicine_B_p->dose_times[1].hour = 21;  // Second dose at 9 PM
-    medicine_B_p->dose_times[1].minute = 30;
+    // set time form now + 2 minutes
+    medicine_B_p->dose_times[1].hour = current_time.tm_hour;
+    medicine_B_p->dose_times[1].minute = (current_time.tm_min + 2) % 60;
+
     strcpy(medicine_B_p->special_requirements, "Take with water");
     medicine_B_p->treatment_start_date = current_time; // Set start date to current current_time
     medicine_B_p->treatment_end_date = current_time; 
+    medicine_B_p->treatment_end_date.tm_mday += 10; // Set treatment end date to 10 days later
 
     add_medicine(medicine_B_p);
 
@@ -140,8 +153,12 @@ void app_main(void)
              current_time.tm_min,
              current_time.tm_sec);
 
+    ESP_LOGI(TAG, "Setting up alarm timer");
+    xTaskCreate(check_for_alarm_task, "Alarm check", 4096, NULL, 6, NULL);
+
 
     ESP_LOGI(TAG, "Entering LVGL task loop");
     xTaskCreate(lvgl_task, "LVGL", 8192, NULL, 5, NULL);
+
 
 }

@@ -61,7 +61,7 @@ void turn_alarm(bool turn)
                 "alarm_task",
                 2048,
                 NULL,
-                2,
+                4,
                 &alarmTaskHandle
             );
             ESP_LOGI(TAG, "Alarm started");

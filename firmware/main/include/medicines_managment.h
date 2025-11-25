@@ -2,6 +2,8 @@
 #define MEDICINES_MANAGMENT_H
 
 #include "time.h"
+#include "freertos/FreeRTOS.h"
+
 #define MAX_MEDICINES_TOTAL 20
 #define MAX_MEDICINE_DOSES_NUMBER_PER_DAY 10
 
@@ -30,5 +32,7 @@ void remove_medicine(const char* medicine_name);
 
 void save_medicines_to_storage(void);
 void load_medicines_from_storage(void);
+
+void check_for_alarm_task(void *arg);
 
 #endif // MEDICINES_MANAGMENT_H

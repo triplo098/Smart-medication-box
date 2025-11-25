@@ -83,8 +83,8 @@ void move_n_steps_task(void *pvParameter)
 
         step_idx = current_step % 4;
 
-        ESP_LOGI(TAG, "Current step: %d, Step_idx: %d", current_step, step_idx);
-        ESP_LOGI(TAG, "Step: %d", current_step);
+        // ESP_LOGI(TAG, "Current step: %d, Step_idx: %d", current_step, step_idx);
+        // ESP_LOGI(TAG, "Step: %d", current_step);
     }
 
     gpio_set_level(INT1_PIN, 0);
@@ -116,7 +116,7 @@ esp_err_t set_section(unsigned int target_section)
 
     if (move_motor_task_handle == NULL)
     {
-        xTaskCreate(move_n_steps_task, "move_motor_task", 2048, (void *)target_steps, 1, &move_motor_task_handle);
+        xTaskCreate(move_n_steps_task, "move_motor_task", 2048, (void *)target_steps, 4, &move_motor_task_handle);
     }
     else
     {

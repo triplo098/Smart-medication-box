@@ -1,7 +1,7 @@
 {
     "version":            "1.2",
     "project_name":       "main",
-    "project_version":    "7386ceb-dirty",
+    "project_version":    "1129040-dirty",
     "project_path":       "/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware",
     "idf_path":           "/home/piotr/esp/esp-idf",
     "build_dir":          "/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/build",
