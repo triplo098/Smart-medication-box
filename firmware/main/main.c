@@ -142,7 +142,8 @@ void app_main(void)
     medicine_B_p->dose_times[0].minute = 30;
     // set time form now + 2 minutes
     medicine_B_p->dose_times[1].hour = current_time.tm_hour;
-    medicine_B_p->dose_times[1].minute = (current_time.tm_min + 40) % 60;
+    // medicine_B_p->dose_times[1].minute = (current_time.tm_min + 2) % 60;
+    medicine_B_p->dose_times[1].minute = 15;
 
     strcpy(medicine_B_p->special_requirements, "Take with water");
     medicine_B_p->treatment_start_date = current_time; // Set start date to current current_time

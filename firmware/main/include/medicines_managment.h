@@ -33,6 +33,9 @@ void remove_medicine(const char* medicine_name);
 medicine_t* get_medicine_from_name(const char *name);
 
 
+void get_medicines_list(medicine_t*** medicines, size_t* count);
+
+void log_medicine_info(medicine_t* medicine);
 
 void save_medicines_to_storage(void);
 void load_medicines_from_storage(void);

@@ -87,7 +87,6 @@ void init_lvgl_medicines_list_scr()
 }
 
 
-
 static void add_medicine_btn_event_handle(lv_event_t *e)
 {
 

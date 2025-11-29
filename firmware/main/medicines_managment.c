@@ -6,6 +6,8 @@
 #include "esp_log.h"
 #include "alarm_helpers.h"
 
+#include "lvgl_alarm_scr.h"
+
 medicine_t **medicines_list;
 
 extern i2c_dev_t rtc_dev;
@@ -174,9 +176,47 @@ void check_for_alarm_task(void *arg)
         {
             ESP_LOGI(TAG, "Alarm time reached! Triggering alarm...");
             turn_alarm(true);
-            // Call lvgl screen to show alarm
+            init_lvgl_alarm_scr();
         }
 
         vTaskDelay(pdMS_TO_TICKS(60000));
     }
 }
+
+
+void log_medicine_info(medicine_t* medicine)
+{
+    ESP_LOGI(TAG, "Medicine Name: %s", medicine->name);
+    ESP_LOGI(TAG, "Doses per day: %d", medicine->doses_per_day);
+    for (int i = 0; i < medicine->doses_per_day; i++)
+    {
+        ESP_LOGI(TAG, "  Dose %d time: %02d:%02d", i + 1,
+                 medicine->dose_times[i].hour,
+                 medicine->dose_times[i].minute);
+    }
+    ESP_LOGI(TAG, "Special Requirements: %s", medicine->special_requirements);
+    ESP_LOGI(TAG, "Treatment Start Date: %04d-%02d-%02d",
+             medicine->treatment_start_date.tm_year + 1900,
+             medicine->treatment_start_date.tm_mon + 1,
+             medicine->treatment_start_date.tm_mday);
+    ESP_LOGI(TAG, "Treatment End Date: %04d-%02d-%02d",
+             medicine->treatment_end_date.tm_year + 1900,
+             medicine->treatment_end_date.tm_mon + 1,
+             medicine->treatment_end_date.tm_mday);
+}
+
+
+void get_medicines_list(medicine_t*** medicines, size_t* count){
+    size_t med_count = 0;
+    for (int i = 0; i < MAX_MEDICINES_TOTAL; i++)
+    {
+        if (medicines_list[i] != NULL)
+        {
+            med_count++;
+        }
+    }
+
+    *medicines = medicines_list;
+    *count = med_count;
+}
+

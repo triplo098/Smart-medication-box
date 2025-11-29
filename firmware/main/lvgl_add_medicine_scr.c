@@ -1,6 +1,8 @@
 #include "lvgl_add_medicine_scr.h"
 #include "lvgl_medicines_list_scr.h"
 #include "lvgl_default_scr.h"
+#include "lvgl_refill_medicine_scr.h"
+
 #include "motor_driver.h"
 #include "alarm_helpers.h"
 // #include "lvgl_keyboard_scr.h"
@@ -227,6 +229,132 @@ static void name_btn_event_handler(lv_event_t *e)
     }
 }
 
+static lv_obj_t *frequency_dropdown_obj = NULL;
+static lv_obj_t *frequency_close_btn_obj = NULL;
+
+static void frequency_btn_matrix_event_handler(lv_event_t *e)
+{
+    lv_event_code_t code = lv_event_get_code(e);
+    lv_obj_t *obj = lv_event_get_current_target(e);
+
+    if (code == LV_EVENT_VALUE_CHANGED) {
+        uint32_t id = lv_buttonmatrix_get_selected_button(obj);
+        const char *txt = lv_buttonmatrix_get_button_text(obj, id);
+        
+        if (txt) {
+            int doses = atoi(txt);
+            if (doses >= 1 && doses <= 6) {
+                local_medicine->doses_per_day = doses;
+                
+                // Update the frequency label
+                char freq_text[32];
+                snprintf(freq_text, sizeof(freq_text), "%d daily", doses);
+                lv_label_set_text(frequency_label, freq_text);
+                
+                ESP_LOGI(TAG, "Frequency set to: %d", doses);
+                
+                // Close the dropdown
+                if (frequency_dropdown_obj) {
+                    lv_obj_del(frequency_dropdown_obj);
+                    frequency_dropdown_obj = NULL;
+                }
+                if (frequency_close_btn_obj) {
+                    lv_obj_del(frequency_close_btn_obj);
+                    frequency_close_btn_obj = NULL;
+                }
+            }
+        }
+    }
+}
+
+static void frequency_close_btn_handler(lv_event_t *e)
+{
+    lv_event_code_t code = lv_event_get_code(e);
+    
+    if (code == LV_EVENT_CLICKED) {
+        ESP_LOGI(TAG, "Frequency close button clicked");
+        
+        // Delete frequency dropdown objects
+        if (frequency_dropdown_obj) {
+            lv_obj_del(frequency_dropdown_obj);
+            frequency_dropdown_obj = NULL;
+        }
+        if (frequency_close_btn_obj) {
+            lv_obj_del(frequency_close_btn_obj);
+            frequency_close_btn_obj = NULL;
+        }
+    }
+}
+
+static void show_frequency_selector(void)
+{
+    // Clean up any existing frequency selector first
+    if (frequency_dropdown_obj) {
+        lv_obj_del(frequency_dropdown_obj);
+        frequency_dropdown_obj = NULL;
+    }
+    if (frequency_close_btn_obj) {
+        lv_obj_del(frequency_close_btn_obj);
+        frequency_close_btn_obj = NULL;
+    }
+
+    // Create container
+    frequency_dropdown_obj = lv_obj_create(lv_screen_active());
+    lv_obj_set_size(frequency_dropdown_obj, lv_pct(85), lv_pct(60));
+    lv_obj_center(frequency_dropdown_obj);
+    lv_obj_set_style_bg_color(frequency_dropdown_obj, lv_color_hex(0x333333), 0);
+    lv_obj_set_style_radius(frequency_dropdown_obj, 15, 0);
+    lv_obj_set_style_border_width(frequency_dropdown_obj, 0, 0);
+
+    // Create title label
+    lv_obj_t *title_label = lv_label_create(frequency_dropdown_obj);
+    lv_label_set_text(title_label, "Frequency");
+    lv_obj_set_style_text_color(title_label, LVGL_WHITE_COLOR, 0);
+    lv_obj_align(title_label, LV_ALIGN_TOP_MID, 0, 10);
+
+    // Create button matrix for frequency selection
+    static const char * btnm_map[] = {"1x", "2x", "3x", "\n",
+                                       "4x", "5x", "6x", ""};
+
+    lv_obj_t *btnm = lv_buttonmatrix_create(frequency_dropdown_obj);
+    lv_buttonmatrix_set_map(btnm, btnm_map);
+    lv_obj_set_size(btnm, lv_pct(85), lv_pct(70));
+    lv_obj_align(btnm, LV_ALIGN_CENTER, 0, 5);
+    
+    // Style the button matrix
+    lv_obj_set_style_bg_color(btnm, lv_color_hex(0x333333), 0);
+    lv_obj_set_style_border_width(btnm, 0, 0);
+    
+    // Style buttons
+    lv_obj_set_style_bg_color(btnm, lv_color_hex(0xEEEEEE), LV_PART_ITEMS);
+    lv_obj_set_style_text_color(btnm, lv_color_hex(0x000000), LV_PART_ITEMS);
+    lv_obj_set_style_radius(btnm, 8, LV_PART_ITEMS);
+    
+    // Style selected button
+    lv_obj_set_style_bg_color(btnm, lv_color_hex(0x4A90E2), LV_PART_ITEMS | LV_STATE_CHECKED);
+    lv_obj_set_style_text_color(btnm, lv_color_hex(0xFFFFFF), LV_PART_ITEMS | LV_STATE_CHECKED);
+    
+    // Highlight current selection
+    if (local_medicine->doses_per_day >= 1 && local_medicine->doses_per_day <= 6) {
+        lv_buttonmatrix_set_button_ctrl(btnm, local_medicine->doses_per_day - 1, LV_BUTTONMATRIX_CTRL_CHECKED);
+    }
+
+    lv_obj_add_event_cb(btnm, frequency_btn_matrix_event_handler, LV_EVENT_VALUE_CHANGED, NULL);
+    // Add close button (back arrow)
+    frequency_close_btn_obj = lv_btn_create(frequency_dropdown_obj);
+    lv_obj_set_size(frequency_close_btn_obj, 30, 30);
+    lv_obj_align(frequency_close_btn_obj, LV_ALIGN_BOTTOM_MID, 0, 10);
+    lv_obj_set_style_bg_color(frequency_close_btn_obj, LVGL_DARK_BLUE_COLOR, 0);
+    lv_obj_set_style_radius(frequency_close_btn_obj, 8, 0);
+    
+    lv_obj_t *arrow_label = lv_label_create(frequency_close_btn_obj);
+    lv_label_set_text(arrow_label, LV_SYMBOL_LEFT);
+    lv_obj_center(arrow_label);
+    
+    
+    lv_obj_add_event_cb(frequency_close_btn_obj, frequency_close_btn_handler, LV_EVENT_CLICKED, NULL);
+}
+
 static void frequency_btn_event_handler(lv_event_t *e)
 {
     lv_event_code_t code = lv_event_get_code(e);
@@ -238,12 +366,8 @@ static void frequency_btn_event_handler(lv_event_t *e)
     }
     else if (code == LV_EVENT_CLICKED)
     {
-        set_section(5);
         ESP_LOGI(TAG, "Frequency input clicked - opening frequency selector");
-        // TODO: Open frequency selector (roller or number picker)
-        // For now, simulate setting frequency to 2
-
-        ESP_LOGI(TAG, "Frequency set to: %d", local_medicine->doses_per_day);
+        show_frequency_selector();
     }
     else if (code == LV_EVENT_RELEASED || code == LV_EVENT_PRESS_LOST)
     {
@@ -257,6 +381,21 @@ static void frequency_btn_event_handler(lv_event_t *e)
 static lv_obj_t *calendar_obj = NULL;
 static lv_obj_t *calendar_close_btn_obj = NULL;
 static bool is_start_date_selection = true;
+
+static lv_obj_t *calendar_header = NULL;
+
+static void calendar_header_event_handler(lv_event_t * e)
+{
+    lv_event_code_t code = lv_event_get_code(e);
+    lv_obj_t *obj = lv_event_get_current_target(e);
+
+    if(code == LV_EVENT_VALUE_CHANGED) {
+        lv_calendar_date_t date;
+        if(lv_calendar_get_pressed_date(calendar_obj, &date)) {
+            lv_calendar_set_showed_date(calendar_obj, date.year, date.month);
+        }
+    }
+}
 
 static void calendar_event_handler(lv_event_t *e)
 {
@@ -298,6 +437,10 @@ static void calendar_event_handler(lv_event_t *e)
             ESP_LOGI(TAG, "Date updated: %s", date_text);
             
             // Close calendar
+            if (calendar_header) {
+                lv_obj_del(calendar_header);
+                calendar_header = NULL;
+            }
             if (calendar_obj) {
                 lv_obj_del(calendar_obj);
                 calendar_obj = NULL;
@@ -318,6 +461,10 @@ static void calendar_close_btn_handler(lv_event_t *e)
         ESP_LOGI(TAG, "Calendar close button clicked");
         
         // Delete calendar objects
+        if (calendar_header) {
+            lv_obj_del(calendar_header);
+            calendar_header = NULL;
+        }
         if (calendar_obj) {
             lv_obj_del(calendar_obj);
             calendar_obj = NULL;
@@ -332,6 +479,10 @@ static void calendar_close_btn_handler(lv_event_t *e)
 static void show_calendar(bool is_start_date)
 {
     // Clean up any existing calendar first
+    if (calendar_header) {
+        lv_obj_del(calendar_header);
+        calendar_header = NULL;
+    }
     if (calendar_obj) {
         lv_obj_del(calendar_obj);
         calendar_obj = NULL;
@@ -345,12 +496,18 @@ static void show_calendar(bool is_start_date)
     
     // Create calendar
     calendar_obj = lv_calendar_create(lv_screen_active());
-    lv_obj_set_size(calendar_obj, lv_pct(90), lv_pct(75));
-    lv_obj_center(calendar_obj);
+    lv_obj_set_size(calendar_obj, lv_pct(90), lv_pct(70));
+    lv_obj_align(calendar_obj, LV_ALIGN_CENTER, 0, 10);
     
     // Set style
     lv_obj_set_style_bg_color(calendar_obj, lv_color_hex(0x000000), 0);
     lv_obj_set_style_text_color(calendar_obj, lv_color_hex(0xFFFFFF), 0);
+    
+    // Create header with month and year dropdowns
+    calendar_header = lv_calendar_header_dropdown_create(calendar_obj);
+    lv_obj_set_style_bg_color(calendar_header, lv_color_hex(0x000000), 0);
+    lv_obj_set_style_text_color(calendar_header, lv_color_hex(0xFFFFFF), 0);
+
     
     // Set today's date
     lv_calendar_set_today_date(calendar_obj, 
@@ -358,16 +515,17 @@ static void show_calendar(bool is_start_date)
                                 current_time.tm_mon + 1, 
                                 current_time.tm_mday);
     
-    // Show current month
-    lv_calendar_set_showed_date(calendar_obj, 
-                                 current_time.tm_year + 1900, 
-                                 current_time.tm_mon + 1);
-    
-    // Highlight selected date
+    // Get the date to show
     struct tm *current_date = is_start_date ? 
         &local_medicine->treatment_start_date : 
         &local_medicine->treatment_end_date;
     
+    // Show the month of selected date
+    lv_calendar_set_showed_date(calendar_obj, 
+                                 current_date->tm_year + 1900, 
+                                 current_date->tm_mon + 1);
+    
+    // Highlight selected date
     lv_calendar_date_t highlighted[] = {
         {
             .year = current_date->tm_year + 1900,
@@ -394,6 +552,7 @@ static void show_calendar(bool is_start_date)
     
     lv_obj_add_event_cb(calendar_close_btn_obj, calendar_close_btn_handler, LV_EVENT_CLICKED, NULL);
 }
+
 
 static void start_date_btn_event_handler(lv_event_t *e)
 {
@@ -435,6 +594,8 @@ static void end_date_btn_event_handler(lv_event_t *e)
     }
 }
 
+
+
 static void special_req_btn_event_handler(lv_event_t *e)
 {
     lv_event_code_t code = lv_event_get_code(e);
@@ -473,13 +634,17 @@ static void save_btn_event_handler(lv_event_t *e)
         {
             add_medicine(local_medicine);
             is_new_medicine = false;
+            //Starting refill procedure
+            init_refill_medicine_scr(local_medicine);
+            
+
         }
         else
         {
             ESP_LOGI(TAG, "Updating existing medicine: %s", local_medicine->name);
+            init_lvgl_medicines_list_scr(NULL);
         }
 
-        init_lvgl_medicines_list_scr(NULL);
     }
     else if (code == LV_EVENT_RELEASED || code == LV_EVENT_PRESS_LOST)
     {
