@@ -11,6 +11,8 @@
 #include "motor_driver.h"
 #include "medicines_managment.h"
 #include "alarm_helpers.h"
+#include "esp_task_wdt.h"
+
 
 
 
@@ -29,10 +31,14 @@ static const char *TAG = "main";
 
 void lvgl_task(void *arg)
 {   
+
+    esp_task_wdt_add(NULL);
+
     while (1)
     {
         lv_timer_handler(); // Handle LVGL tasks
-        vTaskDelay(pdMS_TO_TICKS(50));
+        vTaskDelay(pdMS_TO_TICKS(30));
+        esp_task_wdt_reset();
     }
 }
 
@@ -136,12 +142,12 @@ void app_main(void)
     medicine_B_p->dose_times[0].minute = 30;
     // set time form now + 2 minutes
     medicine_B_p->dose_times[1].hour = current_time.tm_hour;
-    medicine_B_p->dose_times[1].minute = (current_time.tm_min + 2) % 60;
+    medicine_B_p->dose_times[1].minute = (current_time.tm_min + 40) % 60;
 
     strcpy(medicine_B_p->special_requirements, "Take with water");
     medicine_B_p->treatment_start_date = current_time; // Set start date to current current_time
     medicine_B_p->treatment_end_date = current_time; 
-    medicine_B_p->treatment_end_date.tm_mday += 10; // Set treatment end date to 10 days later
+    medicine_B_p->treatment_end_date.tm_mday += 5 % 31; // Set treatment end date to 5 days later
 
     add_medicine(medicine_B_p);
 

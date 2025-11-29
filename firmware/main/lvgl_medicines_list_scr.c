@@ -13,8 +13,12 @@ static lv_obj_t *create_medicine_entry(lv_obj_t *parent, const char *name);
 extern medicine_t** medicines_list;
 
 
-static void back_to_start_btn_event_handler(lv_event_t *e);
+static void medicine_name_btn_event_handle(lv_event_t *e);
 static void add_medicine_btn_event_handle(lv_event_t *e);
+
+static void add_back_btn(lv_obj_t *scr);
+static void back_btn_event_handler(lv_event_t *e);
+
 
 static void remove_medicine_btn_event_handler(lv_event_t *e)
 {
@@ -26,17 +30,7 @@ static void remove_medicine_btn_event_handler(lv_event_t *e)
     {
         ESP_LOGI(TAG, "Remove medicine button clicked for medicine: %s", med_name);
         
-        // Find and remove the medicine from the list
-        for (uint16_t i = 0; i < MAX_MEDICINES_TOTAL; i++)
-        {
-            if (medicines_list[i] == NULL) 
-                continue;
-            else if(!strcmp(medicines_list[i]->name, med_name))
-            {
-                remove_medicine(med_name);
-                break;
-            }
-        }
+        remove_medicine(med_name);
 
         // Refresh the medicines list screen
         init_lvgl_medicines_list_scr();
@@ -80,7 +74,8 @@ void init_lvgl_medicines_list_scr()
     // Add add medicine button
     lv_obj_t *add_btn = lv_btn_create(scr);
     lv_obj_set_size(add_btn, 30, 30);
-    lv_obj_align(add_btn, LV_ALIGN_BOTTOM_MID, 25, -20);
+    lv_obj_align(add_btn, LV_ALIGN_BOTTOM_MID, 25, -15);
+    
     lv_obj_set_style_bg_color(add_btn, LVGL_DARK_BLUE_COLOR, 0);
     lv_obj_set_style_radius(add_btn, 8, 0);
     lv_obj_t *add_label = lv_label_create(add_btn);
@@ -112,6 +107,28 @@ static void add_medicine_btn_event_handle(lv_event_t *e)
 }
 
 
+static void medicine_name_btn_event_handle(lv_event_t *e)
+{
+
+    lv_event_code_t code = lv_event_get_code(e);
+    lv_obj_t *btn = lv_event_get_target(e);
+
+    const char *med_name = (const char *)lv_event_get_user_data(e);
+
+    if (code == LV_EVENT_PRESSED || code == LV_EVENT_CLICKED || code == LV_EVENT_SHORT_CLICKED)
+    {
+        // Code to handle button press
+        lv_obj_set_style_bg_color(btn, lv_color_hex(0x0D47A1), 0); // Darker blue on press
+        
+        medicine_t* med = get_medicine_from_name(med_name);
+        init_lvgl_add_medicine_scr(med);
+    }
+    else if (code == LV_EVENT_RELEASED || code == LV_EVENT_PRESS_LOST)
+    {
+        lv_obj_set_style_bg_color(btn, lv_color_hex(0x1976D2), 0); // Original color on release
+    }
+}
+
 
 
 static lv_obj_t *create_medicine_entry(lv_obj_t *parent, const char *name)
@@ -125,11 +142,13 @@ static lv_obj_t *create_medicine_entry(lv_obj_t *parent, const char *name)
     lv_obj_set_scrollbar_mode(item, LV_SCROLLBAR_MODE_OFF);
 
 
-    // Left: Medicine button (can also be label if you want non-clickable)
+    // Left: Medicine button
     lv_obj_t *med_btn = lv_btn_create(item);
     lv_obj_set_size(med_btn, lv_pct(75), LV_SIZE_CONTENT);
     lv_obj_set_style_bg_color(med_btn, LVGL_DARK_BLUE_COLOR, 0);
     lv_obj_set_style_radius(med_btn, 8, 0);
+
+    lv_obj_add_event_cb(med_btn, medicine_name_btn_event_handle, LV_EVENT_CLICKED, (void *)name);
 
     lv_obj_t *med_label = lv_label_create(med_btn);
     lv_label_set_text(med_label, name);
@@ -151,4 +170,34 @@ static lv_obj_t *create_medicine_entry(lv_obj_t *parent, const char *name)
     lv_obj_center(x_label);
 
     return item;
+}
+
+static void back_btn_event_handler(lv_event_t *e)
+{
+
+    lv_event_code_t code = lv_event_get_code(e);
+    lv_obj_t *btn = lv_event_get_target(e);
+    if (code == LV_EVENT_PRESSED || code == LV_EVENT_CLICKED || code == LV_EVENT_SHORT_CLICKED)
+    {
+        // Code to handle button press
+        lv_obj_set_style_bg_color(btn, lv_color_hex(0x0D47A1), 0); // Darker blue on press
+
+        init_lvgl_default_scr(NULL);
+    }
+    else if (code == LV_EVENT_RELEASED || code == LV_EVENT_PRESS_LOST)
+    {
+        lv_obj_set_style_bg_color(btn, lv_color_hex(0x1976D2), 0); // Original color on release
+    }
+}
+
+static void add_back_btn(lv_obj_t *scr) {
+    lv_obj_t *back_btn = lv_btn_create(scr);
+    lv_obj_set_size(back_btn, 30, 30);
+    lv_obj_align(back_btn, LV_ALIGN_BOTTOM_MID, -25, -15);
+    lv_obj_set_style_bg_color(back_btn, LVGL_DARK_BLUE_COLOR, 0);
+    lv_obj_set_style_radius(back_btn, 8, 0);
+    lv_obj_t *back_label = lv_label_create(back_btn);
+    lv_label_set_text(back_label, LV_SYMBOL_LEFT);
+    lv_obj_center(back_label);
+    lv_obj_add_event_cb(back_btn, back_btn_event_handler, LV_EVENT_ALL, NULL);
 }

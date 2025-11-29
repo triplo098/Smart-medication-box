@@ -30,6 +30,10 @@ void get_next_medicine_time(time_mh_t *next_time);
 void add_medicine(medicine_t *medicine);
 void remove_medicine(const char* medicine_name);
 
+medicine_t* get_medicine_from_name(const char *name);
+
+
+
 void save_medicines_to_storage(void);
 void load_medicines_from_storage(void);
 

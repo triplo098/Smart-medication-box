@@ -76,7 +76,7 @@ static void show_medicine_list_btn_event_handler(lv_event_t *e)
     }
 }
 
-static void back_to_start_btn_event_handler(lv_event_t *e)
+static void back_btn_event_handler(lv_event_t *e)
 {
 
     lv_event_code_t code = lv_event_get_code(e);
@@ -103,6 +103,5 @@ void add_back_btn(lv_obj_t *scr) {
     lv_obj_t *back_label = lv_label_create(back_btn);
     lv_label_set_text(back_label, LV_SYMBOL_LEFT);
     lv_obj_center(back_label);
-    lv_obj_add_event_cb(back_btn, back_to_start_btn_event_handler, LV_EVENT_ALL, NULL);
-
+    lv_obj_add_event_cb(back_btn, back_btn_event_handler, LV_EVENT_ALL, NULL);
 }

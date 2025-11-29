@@ -132,6 +132,18 @@ void remove_medicine(const char *name)
     ESP_LOGI(TAG, "Medicine not found: %s", name);
 }
 
+
+medicine_t* get_medicine_from_name(const char *name) {
+    for (int i = 0; i < MAX_MEDICINES_TOTAL; i++)
+    {
+        if (medicines_list[i] != NULL && strcmp(medicines_list[i]->name, name) == 0)
+        {
+            return medicines_list[i];
+        }
+    }
+    return NULL;
+}
+
 void check_for_alarm_task(void *arg)
 {
     while (1)

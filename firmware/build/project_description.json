@@ -1,7 +1,7 @@
 {
     "version":            "1.2",
     "project_name":       "main",
-    "project_version":    "1129040-dirty",
+    "project_version":    "7ecdd67-dirty",
     "project_path":       "/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware",
     "idf_path":           "/home/piotr/esp/esp-idf",
     "build_dir":          "/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/build",
@@ -2935,8 +2935,8 @@
             "managed_reqs": [],
             "managed_priv_reqs": [],
             "file": "/home/piotr/Documents/Studia/praca_inzynierska/smart-medication-box/firmware/build/esp-idf/unity/libunity.a",
-            "sources": [ "/home/piotr/esp/esp-idf/components/unity/unity/src/unity.c", "/home/piotr/esp/esp-idf/components/unity/unity_compat.c", "/home/piotr/esp/esp-idf/components/unity/unity_runner.c", "/home/piotr/esp/esp-idf/components/unity/unity_utils_freertos.c", "/home/piotr/esp/esp-idf/components/unity/unity_utils_cache.c", "/home/piotr/esp/esp-idf/components/unity/unity_utils_memory.c", "/home/piotr/esp/esp-idf/components/unity/unity_port_esp32.c", "/home/piotr/esp/esp-idf/components/unity/port/esp/unity_utils_memory_esp.c" ],
-            "include_dirs": [ "include", "unity/src" ]
+            "sources": [ "/home/piotr/esp/esp-idf/components/unity/unity/src/unity.c", "/home/piotr/esp/esp-idf/components/unity/unity_compat.c", "/home/piotr/esp/esp-idf/components/unity/unity_runner.c", "/home/piotr/esp/esp-idf/components/unity/unity_utils_freertos.c", "/home/piotr/esp/esp-idf/components/unity/unity_utils_cache.c", "/home/piotr/esp/esp-idf/components/unity/unity/extras/fixture/src/unity_fixture.c", "/home/piotr/esp/esp-idf/components/unity/unity_utils_memory.c", "/home/piotr/esp/esp-idf/components/unity/unity_port_esp32.c", "/home/piotr/esp/esp-idf/components/unity/port/esp/unity_utils_memory_esp.c" ],
+            "include_dirs": [ "include", "unity/src", "unity/extras/fixture/src" ]
         },
         "usb": {
             "alias": "idf::usb",
@@ -4282,7 +4282,7 @@
             "priv_reqs": [],
             "managed_reqs": [],
             "managed_priv_reqs": [],
-            "include_dirs": [ "include", "unity/src" ]
+            "include_dirs": [ "include", "unity/src", "unity/extras/fixture/src" ]
         },
         "usb": {
             "alias": "idf::usb",
