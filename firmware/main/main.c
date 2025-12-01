@@ -11,6 +11,7 @@
 #include "motor_driver.h"
 #include "medicines_managment.h"
 #include "alarm_helpers.h"
+
 #include "esp_task_wdt.h"
 
 
@@ -25,28 +26,40 @@ lv_indev_t *indev;      // LVGL input device for touch
 
 extern medicine_t** medicines_list;
 
-struct tm current_time;
+extern struct tm current_time;
 
 static const char *TAG = "main";
 
 void lvgl_task(void *arg)
 {   
-
-    esp_task_wdt_add(NULL);
+    esp_task_wdt_add(NULL);  // Add current task to watchdog
 
     while (1)
     {
-        lv_timer_handler(); // Handle LVGL tasks
-        vTaskDelay(pdMS_TO_TICKS(30));
         esp_task_wdt_reset();
+        lv_timer_handler(); // Handle LVGL tasks
+        vTaskDelay(pdMS_TO_TICKS(100));
     }
 }
 
 
 void app_main(void)
 {
+    esp_task_wdt_config_t wdt_config = {
+        .timeout_ms = 10000,        // 10 second timeout
+        .idle_core_mask = 0,        // Don't watch idle tasks
+        .trigger_panic = false      // Don't panic on timeout
+    };
     
-    // I2C init
+    // Reconfigure existing watchdog instead of init
+    esp_err_t err = esp_task_wdt_reconfigure(&wdt_config);
+    if (err == ESP_OK) {
+        ESP_LOGI(TAG, "Watchdog reconfigured successfully");
+    } else {
+        ESP_LOGW(TAG, "Watchdog reconfigure failed: %s", esp_err_to_name(err));
+    }
+
+
     ESP_ERROR_CHECK(i2cdev_init());
 
     // PCF8563 RTC
@@ -68,7 +81,13 @@ void app_main(void)
     {
         ESP_LOGW(TAG, "Current time is NOT valid, setting to compile time");
         strptime(__DATE__, "%b %d %Y", &current_time);
+        // strptime(__TIME__, "%H:%M:%S", &current_time);
+        // set time to 12:0
+        
         strptime(__TIME__, "%H:%M:%S", &current_time);
+        current_time.tm_hour = 11;
+        current_time.tm_min = 58;
+
         ESP_ERROR_CHECK(pcf8563_set_time(&rtc_dev, &current_time));
     }
     ESP_LOGI(TAG, "Current time: %04d-%02d-%02d %02d:%02d:%02d",
@@ -109,7 +128,7 @@ void app_main(void)
     touch_init();
 
     // Allocate memory for list of pointers to medicines
-    medicines_list = heap_caps_calloc(MAX_MEDICINES_TOTAL, sizeof(medicine_t *), MALLOC_CAP_8BIT);
+    medicine_list_init();
 
     // Default screen
     init_lvgl_default_scr(NULL);
@@ -121,7 +140,7 @@ void app_main(void)
     alarm_gpio_init();
 
     medicine_t* medicine_A_p = heap_caps_malloc(sizeof(medicine_t), MALLOC_CAP_8BIT);
-    strcpy(medicine_A_p->name, "Medicine A");
+    strcpy(medicine_A_p->name, "VITAMIN D");
     medicine_A_p->doses_per_day = 3;
     medicine_A_p->dose_times[0].hour = 8;   // First dose at 8 AM
     medicine_A_p->dose_times[0].minute = 0;
@@ -135,22 +154,39 @@ void app_main(void)
     medicine_A_p->treatment_end_date.tm_mday += 7; // Set treatment end date to 7 days later
     add_medicine(medicine_A_p);
 
-    medicine_t* medicine_B_p = heap_caps_malloc(sizeof(medicine_t), MALLOC_CAP_8BIT);
-    strcpy(medicine_B_p->name, "Medicine B");
-    medicine_B_p->doses_per_day = 2;
-    medicine_B_p->dose_times[0].hour = 9;   // First dose at 9 AM
-    medicine_B_p->dose_times[0].minute = 30;
-    // set time form now + 2 minutes
-    medicine_B_p->dose_times[1].hour = current_time.tm_hour;
-    // medicine_B_p->dose_times[1].minute = (current_time.tm_min + 2) % 60;
-    medicine_B_p->dose_times[1].minute = 15;
+    // medicine_t* medicine_B_p = heap_caps_malloc(sizeof(medicine_t), MALLOC_CAP_8BIT);
+    // strcpy(medicine_B_p->name, "APAP");
+    // medicine_B_p->doses_per_day = 2;
+    // medicine_B_p->dose_times[0].hour = 9;   // First dose at 9 AM
+    // medicine_B_p->dose_times[0].minute = 30;
+    // // set time form now + 2 minutes
+    // medicine_B_p->dose_times[1].hour = 12;
+    // // medicine_B_p->dose_times[1].minute = (current_time.tm_min + 2) % 60;
+    // medicine_B_p->dose_times[1].minute = 0;
 
-    strcpy(medicine_B_p->special_requirements, "Take with water");
-    medicine_B_p->treatment_start_date = current_time; // Set start date to current current_time
-    medicine_B_p->treatment_end_date = current_time; 
-    medicine_B_p->treatment_end_date.tm_mday += 5 % 31; // Set treatment end date to 5 days later
+    // strcpy(medicine_B_p->special_requirements, "Take with water");
+    // medicine_B_p->treatment_start_date = current_time; // Set start date to current current_time
+    // medicine_B_p->treatment_end_date = current_time; 
+    // medicine_B_p->treatment_end_date.tm_mday += 5;
+    // medicine_B_p->treatment_end_date.tm_mday %= 31; // Set treatment end date to 5 days later
 
-    add_medicine(medicine_B_p);
+    // add_medicine(medicine_B_p);
+
+
+    // medicine_t* medicine_C_p = heap_caps_malloc(sizeof(medicine_t), MALLOC_CAP_8BIT);
+    // strcpy(medicine_C_p->name, "IBUPROFEN");
+    // medicine_C_p->doses_per_day = 1;
+    // medicine_C_p->dose_times[0].hour = 12;
+    // medicine_C_p->dose_times[0].minute = 0;
+    // strcpy(medicine_C_p->special_requirements, "Take with food");
+    // medicine_C_p->treatment_start_date = current_time; // Set start date to current current_time
+    // medicine_C_p->treatment_end_date = current_time;
+    // medicine_C_p->treatment_end_date.tm_mday += 10;
+    // medicine_C_p->treatment_end_date.tm_mday %= 31; // Set treatment end date to 10 days later
+
+    // add_medicine(medicine_C_p);
+
+
 
      ESP_LOGI(TAG, "Current time: %04d-%02d-%02d %02d:%02d:%02d",
              current_time.tm_year + 1900,

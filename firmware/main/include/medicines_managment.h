@@ -42,4 +42,6 @@ void load_medicines_from_storage(void);
 
 void check_for_alarm_task(void *arg);
 
+void medicine_list_init(void);
+
 #endif // MEDICINES_MANAGMENT_H

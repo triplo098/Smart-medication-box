@@ -4,3 +4,4 @@ idf_component_register(SRCS "alarm_helpers.c" "motor_driver.c" "main.c"
                     "lvgl_add_medicine_scr.c" "lvgl_refill_medicine_scr.c"
                     "lvgl_alarm_scr.c"
                     INCLUDE_DIRS "." "include")
+

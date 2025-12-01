@@ -12,10 +12,10 @@ static medicine_t *current_refill_medicine = NULL;
 static int current_compartment = 0;
 
 /* Empty handlers - implement logic later */
-static void back_btn_event_handler(lv_event_t *e) { (void)e; }
-static void next_compartment_btn_event_handler(lv_event_t *e) { (void)e; }
-static void prev_compartment_btn_event_handler(lv_event_t *e) { (void)e; }
-static void accept_btn_event_handler(lv_event_t *e) { (void)e; }
+static void back_btn_event_handler(lv_event_t *e);
+static void next_btn_event_handler(lv_event_t *e);
+static void prev_compartment_btn_event_handler(lv_event_t *e);
+static void accept_btn_event_handler(lv_event_t *e){(void)e;}
 
 static void add_back_btn(lv_obj_t *scr);
 
@@ -76,7 +76,7 @@ void init_refill_medicine_scr(medicine_t *medicine)
     lv_obj_t *next_label = lv_label_create(next_btn);
     lv_label_set_text(next_label, LV_SYMBOL_RIGHT);
     lv_obj_center(next_label);
-    lv_obj_add_event_cb(next_btn, next_compartment_btn_event_handler, LV_EVENT_CLICKED, NULL);
+    lv_obj_add_event_cb(next_btn, next_btn_event_handler, LV_EVENT_CLICKED, NULL);
 
 
 
@@ -95,4 +95,17 @@ static void add_back_btn(lv_obj_t *scr)
     lv_label_set_text(back_label, LV_SYMBOL_LEFT);
     lv_obj_center(back_label);
     lv_obj_add_event_cb(back_btn, back_btn_event_handler, LV_EVENT_ALL, NULL);
+}
+
+
+
+static void next_btn_event_handler(lv_event_t *e) {
+    ESP_LOGI(TAG, "Next compartment button clicked");
+    if (current_refill_medicine == NULL) {
+        ESP_LOGW(TAG, "No current medicine set");
+        return;
+    }
+
+    init_lvgl_default_scr(NULL);
+    
 }

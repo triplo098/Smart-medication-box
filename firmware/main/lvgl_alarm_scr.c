@@ -9,6 +9,9 @@
 #include "lvgl_medicines_list_scr.h" // optional navigation target
 #include "medicines_managment.h"     // medicine_t if you want to build buttons from real data
 
+#include "pcf8563.h"               // for RTC time reading
+
+
 static const char *TAG = "LVGL_ALARM_SCR";
 
 /* Forward declarations */
@@ -19,6 +22,7 @@ static void add_back_btn(lv_obj_t *parent);
 
 
 extern struct tm current_time;
+extern i2c_dev_t rtc_dev;      // PCF8563 RTC device descriptor
 
 
 void init_lvgl_alarm_scr()
@@ -98,7 +102,11 @@ void init_lvgl_alarm_scr()
     /* Alarm label with time and action (two lines) */
     lv_obj_t *alarm_label = lv_label_create(alarm_btn);
 
-    
+    bool valid_time = false;
+    pcf8563_get_time(&rtc_dev, &current_time, &valid_time);
+
+
+
     char time_str[16];
     snprintf(time_str, sizeof(time_str), "%02d:%02d", current_time.tm_hour, current_time.tm_min);
 

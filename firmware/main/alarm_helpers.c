@@ -2,8 +2,11 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_log.h"
+#include <time.h>
 
 static const char *TAG = "ALARM";
+
+struct tm current_time;
 
 static volatile bool alarmEnabled = false;
 static TaskHandle_t alarmTaskHandle = NULL;
