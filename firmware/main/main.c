@@ -8,7 +8,7 @@
 
 #include "display_driver.h"
 #include "lvgl_default_scr.h"
-#include "motor_driver.h"
+#include "sections_controller.h"
 #include "medicines_managment.h"
 #include "alarm_helpers.h"
 
@@ -31,14 +31,18 @@ extern struct tm current_time;
 static const char *TAG = "main";
 
 void lvgl_task(void *arg)
-{   
-    esp_task_wdt_add(NULL);  // Add current task to watchdog
+{    
+
+
+    // Default screen
+    init_lvgl_default_scr(NULL);
+    // esp_task_wdt_add(NULL);  // Add current task to watchdog
 
     while (1)
     {
-        esp_task_wdt_reset();
+        // esp_task_wdt_reset();
         lv_timer_handler(); // Handle LVGL tasks
-        vTaskDelay(pdMS_TO_TICKS(100));
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
 }
 
@@ -81,12 +85,12 @@ void app_main(void)
     {
         ESP_LOGW(TAG, "Current time is NOT valid, setting to compile time");
         strptime(__DATE__, "%b %d %Y", &current_time);
-        // strptime(__TIME__, "%H:%M:%S", &current_time);
+        strptime(__TIME__, "%H:%M:%S", &current_time);
         // set time to 12:0
         
-        strptime(__TIME__, "%H:%M:%S", &current_time);
-        current_time.tm_hour = 11;
-        current_time.tm_min = 58;
+        // strptime(__TIME__, "%H:%M:%S", &current_time);
+        // current_time.tm_hour = 11;
+        // current_time.tm_min = 58;
 
         ESP_ERROR_CHECK(pcf8563_set_time(&rtc_dev, &current_time));
     }
@@ -130,24 +134,18 @@ void app_main(void)
     // Allocate memory for list of pointers to medicines
     medicine_list_init();
 
-    // Default screen
-    init_lvgl_default_scr(NULL);
 
-    // Initialize motor driver
-    init_motor();
+    // Sections controller
+    init_sections_controller();
 
     // Init alarm
     alarm_gpio_init();
 
     medicine_t* medicine_A_p = heap_caps_malloc(sizeof(medicine_t), MALLOC_CAP_8BIT);
     strcpy(medicine_A_p->name, "VITAMIN D");
-    medicine_A_p->doses_per_day = 3;
-    medicine_A_p->dose_times[0].hour = 8;   // First dose at 8 AM
-    medicine_A_p->dose_times[0].minute = 0;
-    medicine_A_p->dose_times[1].hour = 12;  // Second dose at 12 PM
-    medicine_A_p->dose_times[1].minute = 0;
-    medicine_A_p->dose_times[2].hour = 18;  // Third dose at 6 PM
-    medicine_A_p->dose_times[2].minute = 0;
+    medicine_A_p->doses_per_day = 1;
+    medicine_A_p->dose_times[0].hour = current_time.tm_hour;   // First dose at 8 AM
+    medicine_A_p->dose_times[0].minute = current_time.tm_min + 10; // set time form now + 2 minutes
     strcpy(medicine_A_p->special_requirements, "Take after meals");
     medicine_A_p->treatment_start_date = current_time; // Set start date to current time
     medicine_A_p->treatment_end_date = current_time; 
@@ -201,7 +199,7 @@ void app_main(void)
 
 
     ESP_LOGI(TAG, "Entering LVGL task loop");
-    xTaskCreate(lvgl_task, "LVGL", 8192, NULL, 5, NULL);
+    xTaskCreate(lvgl_task, "LVGL", 8192, NULL, 7, NULL);
 
 
 }

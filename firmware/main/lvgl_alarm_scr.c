@@ -8,6 +8,7 @@
 #include "lvgl_default_scr.h"        // for init_lvgl_default_scr()
 #include "lvgl_medicines_list_scr.h" // optional navigation target
 #include "medicines_managment.h"     // medicine_t if you want to build buttons from real data
+#include "alarm_helpers.h"
 
 #include "pcf8563.h"               // for RTC time reading
 
@@ -118,7 +119,7 @@ void init_lvgl_alarm_scr()
     lv_obj_center(alarm_label);
 
     /* Empty handler; wire esp/system logic here later */
-    lv_obj_add_event_cb(alarm_btn, alarm_btn_event_handler, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(alarm_btn, alarm_btn_event_handler, LV_EVENT_CLICKED, NULL);
 
 
     /* Load the screen */
@@ -136,15 +137,15 @@ static void alarm_btn_event_handler(lv_event_t *e)
 {
     lv_event_code_t code = lv_event_get_code(e);
     lv_obj_t *btn = lv_event_get_target(e);
-    if (code == LV_EVENT_PRESSED) {
-        /* visual pressed feedback */
-        lv_obj_set_style_bg_color(btn, lv_color_hex(0x660000), 0);
-    } else if (code == LV_EVENT_RELEASED || code == LV_EVENT_PRESS_LOST) {
-        lv_obj_set_style_bg_color(btn, lv_color_hex(0x8B0000), 0);
-    } else if (code == LV_EVENT_CLICKED) {
+
+    if (code == LV_EVENT_CLICKED || code == LV_EVENT_PRESSED || code == LV_EVENT_RELEASED || code == LV_EVENT_PRESS_LOST) {
+
+
+
         /* action placeholder: stop alarm / notify system */
         ESP_LOGI(TAG, "Alarm button clicked (placeholder)");
         init_lvgl_default_scr(NULL);
+        turn_alarm(false);
     }
 }
 
@@ -173,5 +174,5 @@ static void add_back_btn(lv_obj_t *parent)
     lv_obj_t *back_label = lv_label_create(back_btn);
     lv_label_set_text(back_label, LV_SYMBOL_LEFT);
     lv_obj_center(back_label);
-    lv_obj_add_event_cb(back_btn, back_btn_event_handler, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(back_btn, back_btn_event_handler, LV_EVENT_CLICKED, NULL);
 }

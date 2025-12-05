@@ -9,6 +9,10 @@
 
 #define MAX_MEDICINE_STRING_LENGTH 64
 
+
+
+
+
 typedef struct
 {
     uint8_t hour;   // 0–23
@@ -25,7 +29,9 @@ typedef struct
     struct tm treatment_end_date;
 } medicine_t;
 
-void get_next_medicine_time(time_mh_t *next_time);
+void get_next_medicine_time_from_all_medicines(time_mh_t *next_time);
+
+void get_next_medicine_time_from_medicine(medicine_t* medicine, struct tm* next_time);
 
 void add_medicine(medicine_t *medicine);
 void remove_medicine(const char* medicine_name);
@@ -43,5 +49,10 @@ void load_medicines_from_storage(void);
 void check_for_alarm_task(void *arg);
 
 void medicine_list_init(void);
+ 
+void set_medicine_times_from_frequency(medicine_t* medicine);
+
+void get_all_medicine_time(struct tm * times_array, size_t *count, medicine_t *medicine);
+
 
 #endif // MEDICINES_MANAGMENT_H

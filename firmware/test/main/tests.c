@@ -1,6 +1,8 @@
 #include "unity.h"
 #include "medicines_managment.h"
 #include "alarm_helpers.h"
+#include "sections_controller.h"
+
 #include <string.h>
 
 static void print_banner(const char *text);
@@ -11,7 +13,7 @@ TEST_CASE("Add Medicine Test", "[medicines]")
         struct tm time = {0};
 
         medicine_t *med = heap_caps_malloc(sizeof(medicine_t), MALLOC_CAP_DEFAULT);
-        
+
         strcpy(med->name, "MED");
         med->doses_per_day = 1;
         med->dose_times[0].hour = 8;
@@ -19,7 +21,7 @@ TEST_CASE("Add Medicine Test", "[medicines]")
         strcpy(med->special_requirements, "None");
         med->treatment_start_date = time;
         med->treatment_end_date = time;
-        
+
         add_medicine(med);
         medicine_t *retrieved_med = get_medicine_from_name(med->name);
 
@@ -33,7 +35,7 @@ TEST_CASE("Remove Medicine Test", "[medicines]")
         struct tm time = {0};
 
         medicine_t *med = heap_caps_malloc(sizeof(medicine_t), MALLOC_CAP_DEFAULT);
-        
+
         strcpy(med->name, "MED");
         med->doses_per_day = 1;
         med->dose_times[0].hour = 8;
@@ -41,8 +43,8 @@ TEST_CASE("Remove Medicine Test", "[medicines]")
         strcpy(med->special_requirements, "None");
         med->treatment_start_date = time;
         med->treatment_end_date = time;
-        
-        add_medicine(med);        
+
+        add_medicine(med);
         remove_medicine(med->name);
 
         medicine_t *deleted_med = get_medicine_from_name(med->name);
@@ -53,13 +55,12 @@ TEST_CASE("Get next dose time", "[medicines]")
 {
         medicine_list_init();
 
-        extern struct tm current_time;      
+        extern struct tm current_time;
         current_time.tm_year = 2025 - 1900; // 2025
         current_time.tm_mon = 12 - 1;       // December
-        current_time.tm_mday = 1;           // 1st
+        current_time.tm_mday = 2;           // 2st
         current_time.tm_hour = 7;           // 7 AM
         current_time.tm_min = 30;           // 30 minutes
-
 
         medicine_t *med = heap_caps_malloc(sizeof(medicine_t), MALLOC_CAP_DEFAULT);
         strcpy(med->name, "MED");
@@ -81,10 +82,24 @@ TEST_CASE("Get next dose time", "[medicines]")
         add_medicine(med);
 
         time_mh_t next_time;
-        get_next_medicine_time(&next_time);
+        get_next_medicine_time_from_all_medicines(&next_time);
 
         TEST_ASSERT_EQUAL_UINT8(8, next_time.hour);
         TEST_ASSERT_EQUAL_UINT8(0, next_time.minute);
+}
+
+TEST_CASE("Calculating steps for motor from current to target section", "[motor]")
+{
+        extern unsigned int current_section;
+        current_section = 1;
+
+        unsigned int target_section = 25;
+
+        signed int steps = section_to_steps(target_section);
+
+
+        // Move backwards 1 -> 0 -> 31 -> 30 -> ... -> 25 = -6 sections
+        TEST_ASSERT_EQUAL_INT(STEPS_PER_SECTION * (target_section - current_section - NUMEBR_OF_SECTIONS), steps);
 }
 
 void app_main(void)

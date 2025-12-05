@@ -5,7 +5,7 @@
 
 // Other includes
 #include "display_driver.h"
-#include "motor_driver.h"
+#include "sections_controller.h"
 #include "medicines_managment.h"
 
 static void show_medicine_list_btn_event_handler(lv_event_t *e);
@@ -39,14 +39,14 @@ void init_lvgl_default_scr(lv_obj_t *scr)
     lv_obj_t *show_medicines_label = lv_label_create(btn1);
     lv_label_set_text(show_medicines_label, "Show medicine list");
     lv_obj_center(show_medicines_label);
-    lv_obj_add_event_cb(btn1, show_medicine_list_btn_event_handler, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(btn1, show_medicine_list_btn_event_handler, LV_EVENT_CLICKED, NULL);
 
     lv_obj_t *next_reminder_label = lv_label_create(scr);
     lv_obj_align(next_reminder_label, LV_ALIGN_CENTER, 0, 40);
     lv_obj_set_style_text_color(next_reminder_label, LVGL_WHITE_COLOR, 0);
 
     time_mh_t next_time;
-    get_next_medicine_time(&next_time);
+    get_next_medicine_time_from_all_medicines(&next_time);
 
     char buff[64];
     snprintf(buff, sizeof(buff), "Next reminder time: %02d:%02d", next_time.hour, next_time.minute);
@@ -62,7 +62,7 @@ static void show_medicine_list_btn_event_handler(lv_event_t *e)
 
     lv_event_code_t code = lv_event_get_code(e);
     lv_obj_t *btn = lv_event_get_target(e);
-    if (code == LV_EVENT_PRESSED)
+    if (code == LV_EVENT_PRESSED || code == LV_EVENT_CLICKED || code == LV_EVENT_SHORT_CLICKED)
     {
         // Code to handle button press
         lv_obj_set_style_bg_color(btn, lv_color_hex(0x0D47A1), 0); // Darker blue on press
@@ -81,17 +81,12 @@ static void back_btn_event_handler(lv_event_t *e)
 
     lv_event_code_t code = lv_event_get_code(e);
     lv_obj_t *btn = lv_event_get_target(e);
-    if (code == LV_EVENT_PRESSED || code == LV_EVENT_CLICKED || code == LV_EVENT_SHORT_CLICKED)
-    {
-        // Code to handle button press
-        lv_obj_set_style_bg_color(btn, lv_color_hex(0x0D47A1), 0); // Darker blue on press
+    
+    // Code to handle button press
+    lv_obj_set_style_bg_color(btn, lv_color_hex(0x0D47A1), 0); // Darker blue on press
 
-        init_lvgl_default_scr(NULL);
-    }
-    else if (code == LV_EVENT_RELEASED || code == LV_EVENT_PRESS_LOST)
-    {
-        lv_obj_set_style_bg_color(btn, lv_color_hex(0x1976D2), 0); // Original color on release
-    }
+    init_lvgl_default_scr(NULL);
+
 }
 
 void add_back_btn(lv_obj_t *scr) {
@@ -103,5 +98,5 @@ void add_back_btn(lv_obj_t *scr) {
     lv_obj_t *back_label = lv_label_create(back_btn);
     lv_label_set_text(back_label, LV_SYMBOL_LEFT);
     lv_obj_center(back_label);
-    lv_obj_add_event_cb(back_btn, back_btn_event_handler, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(back_btn, back_btn_event_handler, LV_EVENT_CLICKED, NULL);
 }
